@@ -32,6 +32,8 @@ public class HousingServiceImpl implements HousingService {
     HouseMapper houseMapper;
 
 
+    // bo method nay
+
     @Override
     public PageResponse<?> findAll() {
         return PageResponse.builder()
@@ -43,12 +45,11 @@ public class HousingServiceImpl implements HousingService {
     public HouseDto createHousing(CreationHousingRequest request) {
 
         // housing_db save house
-        var house = housingRepository.save(houseMapper.fromCreationToEntity(request));
+        House house = housingRepository.save(houseMapper.fromCreationToEntity(request));
 
         // reference images to house
         updateImageToHouse(house.getImages(), house);
         // user_db update house to user
-
 
 
         return houseMapper.toDto(house);

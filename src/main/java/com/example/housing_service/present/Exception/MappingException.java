@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
 public class MappingException {
     Environment environment;
     public String getErrorMessage (String errorCode) {
-        return environment.getProperty("T-02");
+        return environment.getProperty(errorCode);
     }
 }

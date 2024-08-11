@@ -51,6 +51,5 @@ public class CreationHousingRequest {
 
     Boolean hasWaterHeater;
 
-
     Set<String> images; // list image links
 }
