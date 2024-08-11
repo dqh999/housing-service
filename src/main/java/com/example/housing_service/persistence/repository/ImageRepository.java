@@ -1,6 +1,6 @@
-package com.example.housing_service.persistence.entity.repository;
+package com.example.housing_service.persistence.model.repository;
 
-import com.example.housing_service.persistence.entity.Image;
+import com.example.housing_service.persistence.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
