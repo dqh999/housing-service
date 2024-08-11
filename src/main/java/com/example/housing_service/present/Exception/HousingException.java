@@ -1,6 +1,6 @@
-package com.example.housing_service.Business.Exception;
+package com.example.housing_service.present.Exception;
 
-import com.example.housing_service.Business.Configration.ApplicationContextHolder;
+import com.example.housing_service.Configration.ApplicationContextHolder;
 import lombok.Data;
 
 @Data

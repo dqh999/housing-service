@@ -1,6 +1,6 @@
-package com.example.housing_service.Business.Configration;
+package com.example.housing_service.Configration;
 
-import com.example.housing_service.Presentation.Security.AuthenticationApp;
+import com.example.housing_service.Security.AuthenticationApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

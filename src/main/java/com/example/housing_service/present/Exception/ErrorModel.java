@@ -1,4 +1,4 @@
-package com.example.housing_service.Business.Exception;
+package com.example.housing_service.present.Exception;
 
 import lombok.Data;
 

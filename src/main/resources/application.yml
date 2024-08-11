@@ -1,1 +1,22 @@
-spring.application.name=housing-service
+
+api:
+  prefix: api/v1
+server:
+  port: 9006
+
+
+spring:
+  application:
+    name: housing-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://midtob.com:3306/housing_db?useSSL=false}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:midtob}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
