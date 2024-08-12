@@ -1,6 +1,6 @@
-package com.example.housing_service.Presentation.Security;
+package com.example.housing_service.presention.authentication;
 
-import com.example.housing_service.Presentation.DataTransferObject.UserRequest;
+import com.example.housing_service.presention.dataTransferObject.request.UserRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

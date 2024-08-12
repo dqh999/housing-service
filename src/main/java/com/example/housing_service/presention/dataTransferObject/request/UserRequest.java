@@ -1,4 +1,4 @@
-package com.example.housing_service.Presentation.DataTransferObject;
+package com.example.housing_service.presention.dataTransferObject.request;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

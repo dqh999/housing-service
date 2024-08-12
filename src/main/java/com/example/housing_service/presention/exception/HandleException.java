@@ -1,4 +1,4 @@
-package com.example.housing_service.Business.Exception;
+package com.example.housing_service.presention.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,4 +11,5 @@ public class HandleException {
     public ResponseEntity<ErrorModel> handleExceptionA(HousingException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorModel());
     }
+
 }

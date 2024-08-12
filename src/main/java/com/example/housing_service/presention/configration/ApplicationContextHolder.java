@@ -1,4 +1,4 @@
-package com.example.housing_service.Business.Configration;
+package com.example.housing_service.presention.configration;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
