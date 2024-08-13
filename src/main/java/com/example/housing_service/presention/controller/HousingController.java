@@ -24,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/housing")
+@RequestMapping("/${api.prefix}/housing")
 public class HousingController{
     HousingService housingService;
     HousingFavoriteService housingFavoriteService;
