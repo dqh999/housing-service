@@ -48,8 +48,9 @@ public class AuthenticationApp extends OncePerRequestFilter {
         if (rolesHeader != null && !rolesHeader.isEmpty()) {
             roles = Arrays.asList(rolesHeader.split(","));
         }
-
-        UserRequest userRequest = new UserRequest();
+        System.out.println(roles);
+        UserRequest userRequest =  UserRequest.builder()
+                .build();
         userRequest.setUserId(userId);
 //        userRequest.setUserName(String.valueOf(userId));
         userRequest.setRoles(roles);

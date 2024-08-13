@@ -29,13 +29,14 @@ public class HousingController{
     HousingService housingService;
     HousingFavoriteService housingFavoriteService;
 
-    @PostMapping("")
+    @PostMapping("/uploadHouse")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> createHouse(
             @AuthenticationPrincipal UserRequest userRequest,
             @Valid @RequestBody CreationHousingRequest request){
+        System.out.println("HI "+ userRequest);
         return ApiResponse.build()
-                .withData(housingService.createHousing(userRequest,request))
+                .withData(housingService.createHousing(userRequest, request))
                 .toEntity();
     }
 

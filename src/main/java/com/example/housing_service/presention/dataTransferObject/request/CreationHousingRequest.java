@@ -1,5 +1,10 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
+import com.example.housing_service.util.RoomCategory;
+import com.example.housing_service.util.RoomType;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,43 +20,43 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreationHousingRequest {
-    List<UserRequest> userRequest;
-    Integer userId;
-    String address;
+    RoomType roomType;
+    RoomCategory roomCategory;
 
-    @NotBlank(message = "${title} cannot be blank")
     String title;
-
-    String thumbnail;
     String description;
-
     Double price;
 
-    String roomType; // can change to enum
-
-    String roomCategory; // can change to enum
+    String address;
+    Double latitude;
+    Double longitude;
 
     String ownerName;
     String contactPhoneNumber;
+    Integer houseArea;
+    Integer maxOccupancy;
 
-    Integer area;
-
-
-
-    String maxOccupancy;
-
+    Boolean hasPrivateBathroom;
+    Boolean hasWifi;
     Boolean hasFireSafety;
-
-
-    Boolean cleaningType;
-
-
-    Boolean hasOutdoorFeatures;
-
-
-    Boolean hasAirConditioner;
-
+    Boolean hasEmergencyExit;
+    Boolean hasMezzanine;
     Boolean hasWaterHeater;
+    Boolean hasOutdoorFeatures;
+    Boolean hasCookingArea;
+    Boolean hasAirConditioner;
+    Boolean hasFridge;
+    Boolean hasParking;
+
+    // Surrounding environment
+    Boolean nearMarket;
+    Boolean nearSupermarket;
+    Boolean nearHospital;
+    Boolean nearSchool;
+    Boolean nearPark;
+    Boolean nearGym;
+    Boolean nearBus;
+    Boolean nearMainRoad;
 
     Set<String> attachments;
 }
