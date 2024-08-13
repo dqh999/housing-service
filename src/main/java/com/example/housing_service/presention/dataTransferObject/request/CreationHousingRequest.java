@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -14,13 +15,14 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreationHousingRequest {
+    List<UserRequest> userRequest;
     Integer userId;
     String address;
 
     @NotBlank(message = "${title} cannot be blank")
     String title;
 
-
+    String thumbnail;
     String description;
 
     Double price;
@@ -29,11 +31,11 @@ public class CreationHousingRequest {
 
     String roomCategory; // can change to enum
 
+    String ownerName;
     String contactPhoneNumber;
 
     Integer area;
 
-    Boolean sharedWithOwner;
 
 
     String maxOccupancy;
@@ -51,5 +53,5 @@ public class CreationHousingRequest {
 
     Boolean hasWaterHeater;
 
-    Set<String> images; // list image links
+    Set<String> attachments;
 }
