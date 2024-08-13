@@ -26,10 +26,12 @@ public interface HouseMapper extends EntityMapper<HouseEntity, HouseResponse> {
     default Set<AttachmentEntity> creationRequestToEntity(Set<String> attachments) {
         Set<AttachmentEntity> listMappingEntity = new HashSet<>();
 
-        attachments.forEach(image -> {
-            AttachmentEntity entity = AttachmentEntity.builder().build();
-            listMappingEntity.add(entity);
-        });
+        if (attachments != null){
+            attachments.forEach(image -> {
+                AttachmentEntity entity = AttachmentEntity.builder().build();
+                listMappingEntity.add(entity);
+            });
+        }
         return listMappingEntity;
     }
 }

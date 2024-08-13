@@ -1,16 +1,25 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-@Data
+import java.util.stream.Collectors;
+
+@Data @Builder
 public class UserRequest implements UserDetails {
     private Long userId;
     private List<String> roles;
-
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
@@ -31,10 +40,6 @@ public class UserRequest implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
 
     @Override
     public String getPassword() {
