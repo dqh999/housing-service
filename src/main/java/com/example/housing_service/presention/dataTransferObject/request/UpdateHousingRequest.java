@@ -48,5 +48,5 @@ public class UpdateHousingRequest {
 
     Boolean hasWaterHeater;
 
-    Set<String> images;
+    Set<String> attachments;
 }

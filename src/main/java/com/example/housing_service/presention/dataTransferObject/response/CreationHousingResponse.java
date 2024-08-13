@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
+import java.util.Set;
 @Getter
 @Setter
 @Builder
@@ -16,5 +16,5 @@ public class CreationHousingResponse {
     String title;
     String description;
     Double price;
-//    Set<String> attachments;
+    Set<String> attachments;
 }

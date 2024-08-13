@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
@@ -16,8 +17,9 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class AbstractEntity {
+
     @Column(
             name = "created_at",
             nullable = false,
@@ -26,4 +28,12 @@ public class AbstractEntity {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     Date createdAt;
+
+    @Column(
+            name = "updated_at",
+            nullable = false
+    )
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    Date updatedAt;
 }

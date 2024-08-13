@@ -1,5 +1,7 @@
-package com.example.housing_service.presention.dataTransferObject;
+package com.example.housing_service.presention.dataTransferObject.response;
 
+import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.presention.dataTransferObject.PosterDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,8 +14,10 @@ import java.util.Set;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HouseDto {
-    Integer userId;
+public class HouseResponse {
+    Long houseId;
+    PosterDTO poster;
+
     String address;
 
     String title;
@@ -23,7 +27,7 @@ public class HouseDto {
 
     Double price;
 
-    String roomType; // can change to enum
+    String roomType;
 
     String roomCategory; // can change to enum
 
@@ -31,7 +35,6 @@ public class HouseDto {
 
     Integer area;
 
-    Boolean sharedWithOwner;
 
 
     String maxOccupancy;
@@ -50,5 +53,6 @@ public class HouseDto {
     Boolean hasWaterHeater;
 
 
-    Set<ImageDto> images; // list image links
+    Set<AttachmentDTO> attachments;
+    int totalFavorites;
 }
