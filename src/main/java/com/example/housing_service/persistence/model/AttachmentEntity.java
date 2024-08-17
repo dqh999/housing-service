@@ -6,13 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_attachments")
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity(name = "A")
+@Entity
+@Table(name = "tbl_house_attachments")
+@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttachmentEntity {
     @Id
@@ -21,9 +17,10 @@ public class AttachmentEntity {
     Long id;
     @Column(name = "attachment_type")
     String attachmentType;
+    @Column(name = "attachment_name")
+    String attachmentName;
     @Column(name = "source")
     String source;
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "house_id")
     HouseEntity houseEntity;

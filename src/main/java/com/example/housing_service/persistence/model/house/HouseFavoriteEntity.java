@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity(name = "Favorite")
-@Table(name = "tbl_favorites")
+@Entity
+@Table(name = "tbl_house_favorites")
 @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseFavoriteEntity extends AbstractEntity {

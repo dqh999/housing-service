@@ -2,9 +2,8 @@ CREATE TABLE tbl_houses (
     house_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     poster_id BIGINT,
 
-    room_type VARCHAR(50),
-    room_category VARCHAR(50),
-
+    room_type VARCHAR(50), -- RENTING / ROOMMATE / SUBLET
+    room_category VARCHAR(50), -- STUDIO / APARTMENT / MINI_APARTMENT / HOUSE
 
     title VARCHAR(255),
     description VARCHAR(255),
@@ -12,9 +11,9 @@ CREATE TABLE tbl_houses (
     thumbnail VARCHAR(255),
 
     address VARCHAR(255) ,
-    latitude DOUBLE,
-    longitude DOUBLE,
-    geom  POINT,
+    latitude DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL,
+    geom  POINT NOT NULL,
 
     owner_name VARCHAR(255),
     contact_phone_number VARCHAR(20),
@@ -69,11 +68,15 @@ BEGIN
 END //
 
 DELIMITER ;
-CREATE TABLE tbl_attachments (
+DELIMITER //
+
+
+CREATE TABLE tbl_house_attachments (
     attachment_id BIGINT PRIMARY KEY,
     house_id BIGINT,
     position VARCHAR(50),
     attachment_type VARCHAR(50),
+    attachment_name VARCHAR(50),
     source VARCHAR(255),
     created_at DATETIME,
     updated_at DATETIME

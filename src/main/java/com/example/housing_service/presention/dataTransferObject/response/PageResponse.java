@@ -9,12 +9,14 @@ import org.springframework.core.serializer.Serializer;
 import java.io.Serializable;
 import java.util.List;
 
-@Getter
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter @Builder
 public class PageResponse<T> implements Serializable {
-    Integer total;
+    Integer totalElements;
+    Integer totalPages;
     Integer currentPage;
     Integer pageSize;
     List<T> data;
+    Boolean hasNext;
+    Boolean hasPrevious;
 }

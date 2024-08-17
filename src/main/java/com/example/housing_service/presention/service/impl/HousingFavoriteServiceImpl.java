@@ -3,7 +3,7 @@ package com.example.housing_service.presention.service.impl;
 import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.model.house.HouseFavoriteEntity;
 import com.example.housing_service.persistence.repository.HousingFavoriteRepository;
-import com.example.housing_service.presention.dataTransferObject.request.UserRequest;
+import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.service.HousingFavoriteService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -18,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PACKAGE, makeFinal = true)
 @Slf4j
-public class HousingFavoriteServiceIml implements HousingFavoriteService {
+public class HousingFavoriteServiceImpl implements HousingFavoriteService {
     HousingFavoriteRepository housingFavoriteRepository;
     @Override
     @Transactional
-    public void addFavoriteHouse(UserRequest userRequest, Long houseId) {
+    public void addFavoriteHouse(UserDTO userRequest, Long houseId) {
         HouseFavoriteEntity newHouseFavoriteEntity = HouseFavoriteEntity.builder()
                 .userId(userRequest.getUserId())
                 .houseId(houseId)
@@ -36,7 +36,7 @@ public class HousingFavoriteServiceIml implements HousingFavoriteService {
     }
 
     @Override
-    public void removeFavoriteHouse(UserRequest userRequest, Long houseId) {
+    public void removeFavoriteHouse(UserDTO userRequest, Long houseId) {
 
     }
 
@@ -46,7 +46,7 @@ public class HousingFavoriteServiceIml implements HousingFavoriteService {
     }
 
     @Override
-    public boolean isHouseFavorite(UserRequest userRequest, Long houseId) {
+    public boolean isHouseFavorite(UserDTO userRequest, Long houseId) {
         return false;
     }
 }

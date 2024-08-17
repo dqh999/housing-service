@@ -1,6 +1,6 @@
 package com.example.housing_service.presention.authentication;
 
-import com.example.housing_service.presention.dataTransferObject.request.UserRequest;
+import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ public class AuthenticationApp extends OncePerRequestFilter {
             roles = Arrays.asList(rolesHeader.split(","));
         }
         System.out.println(roles);
-        UserRequest userRequest =  UserRequest.builder()
+        UserDTO userRequest =  UserDTO.builder()
                 .build();
         userRequest.setUserId(userId);
 //        userRequest.setUserName(String.valueOf(userId));

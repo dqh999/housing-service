@@ -1,6 +1,7 @@
 
 api:
   prefix: api/v1
+  user-service: ${USER_SERVICE:http://localhost:9002}
 server:
   port: 9006
 

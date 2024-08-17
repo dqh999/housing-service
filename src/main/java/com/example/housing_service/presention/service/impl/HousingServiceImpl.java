@@ -1,8 +1,10 @@
 package com.example.housing_service.presention.service.impl;
 
+import com.example.housing_service.intergration.client.UserClient;
 import com.example.housing_service.persistence.repository.AttachmentRepository;
 import com.example.housing_service.persistence.repository.HousingRepository;
-import com.example.housing_service.presention.dataTransferObject.request.UserRequest;
+import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
 import com.example.housing_service.presention.dataTransferObject.request.HousePositionRequest;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
@@ -13,6 +15,7 @@ import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
 import com.example.housing_service.presention.mapper.HouseMapper;
 import com.example.housing_service.presention.mapper.AttachmentMapper;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,9 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,30 +34,27 @@ import java.util.stream.Collectors;
 public class HousingServiceImpl implements HousingService{
     HousingRepository housingRepository;
     AttachmentRepository attachmentRepository;
-    AttachmentMapper imageMapper;
+    AttachmentMapper attachmentMapper;
     HouseMapper houseMapper;
-
-
-    // bo method nay
+    UserClient userClient;
 
     @Override
-    public PageResponse<?> findAll() {
-        return PageResponse.builder()
-                .build();
-    }
-
-    @Override
-    public HouseResponse createHousing(UserRequest userRequest,CreationHousingRequest request) {
-
-        // housing_db save house
+    @Transactional
+    public HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request) {
         var houseEntity = houseMapper.fromCreationToEntity(request);
         houseEntity.setPosterId(userRequest.getUserId());
         housingRepository.save(houseEntity);
-        // reference images to house
-//        updateImageToHouse(houseEntity.getAttachmentEntities(), houseEntity);
-        // user_db update house to user
-
-
+        List<AttachmentEntity> attachmentEntities = request.getAttachments().stream()
+                .map(attachmentDTO -> {
+                    return AttachmentEntity.builder()
+                            .houseEntity(houseEntity)
+                            .attachmentType(attachmentDTO.getAttachmentType())
+                            .attachmentName(attachmentDTO.getAttachmentName())
+                            .source(attachmentDTO.getSource())
+                            .build();
+                })
+                .collect(Collectors.toList());
+        attachmentRepository.saveAll(attachmentEntities);
         return houseMapper.toDto(houseEntity);
     }
 
@@ -77,46 +76,68 @@ public class HousingServiceImpl implements HousingService{
     }
 
     @Override
-    public void reportHousing(Long houseId) {
-
+    public HouseResponse getHouseById(Long houseId) throws Exception {
+        var result = housingRepository.findById(houseId)
+                .orElseThrow(() -> new Exception(String.format("House with id %s not found", houseId)));
+        var attachments = result.getAttachments();
+        var response = houseMapper.toDto(result);
+        response.setAttachments(attachmentMapper.toDto(attachments));
+        return response;
     }
 
     @Override
-    public void identifyHousing() {
-
+    public PageResponse<HouseResponse> findTopFavorite(Pageable pageable) {
+        var result = housingRepository.findTopFavorite(pageable);
+        return PageResponse.<HouseResponse>builder()
+                .totalPages(result.getTotalPages())
+                .pageSize(result.getSize())
+                .build();
     }
 
     @Override
     public PageResponse<HouseResponse> findByAddress(String address, Pageable pageable) {
         var result = housingRepository.findAllByAddressContainingIgnoreCase(address, pageable);
-        List<HouseEntity> data = result.getContent();
-
-
-
+        List<Long> posterIds = result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList());
+        var posters = userClient.fetchUsers(posterIds);
+        Map<Long, UserDTO> posterMap = posters.getData().stream()
+                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
         return PageResponse.<HouseResponse>builder()
                 .currentPage(result.getNumber())
-                .total(result.getTotalPages())
+                .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())
-                .data(result.getContent().stream().map(house -> {
-                    return HouseResponse.builder()
-                            .houseId(house.getId())
-                            .build();
+                .data(result.getContent().stream().map(houseEntity -> {
+                    HouseResponse houseResponse = houseMapper.toDto(houseEntity);
+                    houseResponse.setPoster(posterMap.get(houseEntity.getPosterId()));
+                    return houseResponse;
                 }).collect(Collectors.toList()))
                 .build();
     }
 
     @Override
-    public PageResponse<HouseEntity> findByPosition(HousePositionRequest request, Pageable pageable) {
+    public PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable) {
         int radiusInMeters = request.getRadius() * 1000;
         var result = housingRepository.findAllByDistanceWithin(request.getLongitude(),
                 request.getLatitude(),
                 radiusInMeters,
                 pageable);
-        return PageResponse.<HouseEntity>builder()
+        log.info("result " + result);
+        List<Long> posterIds = result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList());
+        var posters = userClient.fetchUsers(posterIds);
+        log.info("poster " + posters);
+        Map<Long, UserDTO> posterMap = posters.getData().stream()
+                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+        return PageResponse.<HouseResponse>builder()
+                .totalElements((int) result.getTotalElements())
                 .currentPage(result.getNumber())
-                .total(result.getTotalPages())
+                .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())
-                .data(result.getContent())
+                .data(result.stream().map(houseEntity -> {
+                    HouseResponse response = houseMapper.toDto(houseEntity);
+                    response.setPoster(posterMap.get(houseEntity.getPosterId()));
+                    return response;
+                }).collect(Collectors.toList()))
+                .hasNext(result.hasNext())
+                .hasPrevious(result.hasPrevious())
                 .build();
     }
     void updateImageToHouse(Set<AttachmentEntity> attachmentEntities, HouseEntity houseEntity){

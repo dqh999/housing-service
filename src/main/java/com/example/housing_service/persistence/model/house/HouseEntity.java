@@ -8,13 +8,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
-@Entity(name = "houseEntity")
+
+@Entity
 @Table(name = "tbl_houses")
 @Getter @Setter @Builder
 @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HouseEntity  {
+public class HouseEntity  extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "house_id")
@@ -33,6 +35,8 @@ public class HouseEntity  {
     String title;
     @Column(name = "description")
     String description;
+    @Column(name = "thumbnail")
+    String thumbnail;
     @Column(name = "price", nullable = false)
     Double price;
 
@@ -94,11 +98,6 @@ public class HouseEntity  {
     @Column(name = "near_main_road")
     Boolean nearMainRoad;
 
-    @OneToMany(
-            mappedBy = "houseEntity",
-//            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    Set<AttachmentEntity> attachments;
-
+    @OneToMany(mappedBy = "houseEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<AttachmentEntity> attachments;
 }
