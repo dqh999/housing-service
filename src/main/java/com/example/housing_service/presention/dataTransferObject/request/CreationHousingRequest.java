@@ -1,5 +1,7 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
+import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
 import jakarta.persistence.Column;
@@ -22,10 +24,11 @@ import java.util.Set;
 public class CreationHousingRequest {
     RoomType roomType;
     RoomCategory roomCategory;
-
+    
     String title;
     String description;
     Double price;
+    String thumbnail;
 
     String address;
     Double latitude;
@@ -33,8 +36,10 @@ public class CreationHousingRequest {
 
     String ownerName;
     String contactPhoneNumber;
+
     Integer houseArea;
     Integer maxOccupancy;
+
 
     Boolean hasPrivateBathroom;
     Boolean hasWifi;
@@ -48,7 +53,7 @@ public class CreationHousingRequest {
     Boolean hasFridge;
     Boolean hasParking;
 
-    // Surrounding environment
+
     Boolean nearMarket;
     Boolean nearSupermarket;
     Boolean nearHospital;
@@ -58,5 +63,5 @@ public class CreationHousingRequest {
     Boolean nearBus;
     Boolean nearMainRoad;
 
-    Set<String> attachments;
+    Set<AttachmentDTO> attachments;
 }

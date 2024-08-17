@@ -1,7 +1,6 @@
 package com.example.housing_service.presention.service;
 
-import com.example.housing_service.persistence.model.house.HouseEntity;
-import com.example.housing_service.presention.dataTransferObject.request.UserRequest;
+import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
 import com.example.housing_service.presention.dataTransferObject.request.CreationHousingRequest;
@@ -10,17 +9,15 @@ import com.example.housing_service.presention.dataTransferObject.request.UpdateH
 import org.springframework.data.domain.Pageable;
 
 public interface HousingService {
-    HouseResponse createHousing(UserRequest userRequest,CreationHousingRequest request);
+    HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request);
 
-    PageResponse<?> findAll();
     void updateHousing(Long houseId, UpdateHousingRequest request) throws Exception;
+    HouseResponse getHouseById(Long houseId) throws Exception;
 
-    void reportHousing(Long houseId);
-
-    void identifyHousing();
+    PageResponse<HouseResponse> findTopFavorite(Pageable pageable);
 
     PageResponse<HouseResponse> findByAddress(String address, Pageable pageable);
 
 
-    PageResponse<HouseEntity> findByPosition(HousePositionRequest request, Pageable pageable);
+    PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable);
 }

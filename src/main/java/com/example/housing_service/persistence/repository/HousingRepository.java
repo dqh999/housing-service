@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface HousingRepository extends JpaRepository<HouseEntity, Long>, JpaSpecificationExecutor<HouseEntity> {
     Page<HouseEntity> findAllByAddressContainingIgnoreCase(String address, Pageable pageable);
-    @Query(value = "SELECT h.* FROM tbl_houses h " +
+    @Query(value = "SELECT h.* FROM `tbl_houses` h " +
             "WHERE ST_Distance_Sphere(h.geom, ST_GeomFromText(CONCAT('POINT(', :longitude, ' ', :latitude, ')'))) <= :radius " +
             "ORDER BY ST_Distance_Sphere(h.geom, ST_GeomFromText(CONCAT('POINT(', :longitude, ' ', :latitude, ')')))",
             nativeQuery = true)
@@ -20,5 +22,9 @@ public interface HousingRepository extends JpaRepository<HouseEntity, Long>, Jpa
                                               @Param("latitude") Double latitude,
                                               @Param("radius") Integer radius,
                                               Pageable pageable);
-
+    @Query("SELECT h FROM HouseEntity h " +
+            "JOIN HouseFavoriteEntity hf ON h.id = hf.houseId " +
+            "GROUP BY h.id " +
+            "ORDER BY COUNT(hf) DESC")
+    Page<HouseEntity> findTopFavorite(Pageable pageable);
 }
