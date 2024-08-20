@@ -10,11 +10,12 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 import java.util.Set;
+import org.locationtech.jts.geom.Point;
+
 
 @Entity
 @Table(name = "tbl_houses")
-@Getter @Setter @Builder
-@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseEntity  extends AbstractEntity {
     @Id
@@ -39,6 +40,11 @@ public class HouseEntity  extends AbstractEntity {
     String thumbnail;
     @Column(name = "price", nullable = false)
     Double price;
+    @Column(name = "slug")
+    String slug;
+    @Column(name = "is_verified")
+    Boolean isVerified;
+    Integer totalViews;
 
     @Column(name = "address", nullable = false)
     String address;
@@ -46,6 +52,8 @@ public class HouseEntity  extends AbstractEntity {
     Double latitude;
     @Column(name = "longitude")
     Double longitude;
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    Point geom;
 
     @Column(name = "owner_name")
     String ownerName;

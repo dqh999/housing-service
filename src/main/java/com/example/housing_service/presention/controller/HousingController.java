@@ -1,9 +1,7 @@
 package com.example.housing_service.presention.controller;
 
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
-import com.example.housing_service.presention.dataTransferObject.request.CreationHousingRequest;
-import com.example.housing_service.presention.dataTransferObject.request.HousePositionRequest;
-import com.example.housing_service.presention.dataTransferObject.request.UpdateHousingRequest;
+import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.ApiResponse;
 import com.example.housing_service.presention.service.HousingFavoriteService;
 import com.example.housing_service.presention.service.HousingService;
@@ -18,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,20 +37,9 @@ public class HousingController {
     public ResponseEntity<?> createHouse(
             @AuthenticationPrincipal UserDTO userRequest,
             @Valid @RequestBody CreationHousingRequest request){
+        var result = housingService.createHousing(userRequest, request);
         return ApiResponse.build()
-                .withData(housingService.createHousing(userRequest, request))
-                .toEntity();
-    }
-    @PostMapping("/uploadHouses")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> uploadHouses(
-            @AuthenticationPrincipal UserDTO userRequest,
-            @Valid @RequestBody List<CreationHousingRequest> requests){
-        log.info("request size: " + requests.size());
-        return ApiResponse.build()
-                .withData(requests.stream().map(request -> {
-                    return housingService.createHousing(userRequest, request);
-                }).collect(Collectors.toList()))
+                .withData(result)
                 .toEntity();
     }
 
@@ -63,51 +52,68 @@ public class HousingController {
                 .toEntity();
     }
     @GetMapping
-    public ResponseEntity<?> getHouseById(@RequestParam Long houseId) throws Exception{
-        var result = housingService.getHouseById(houseId);
+    public ResponseEntity<?> getHouseBySlug(@RequestParam String slug) throws Exception{
+        var result = housingService.getHouseBySlug(slug);
         return ApiResponse.build()
                 .withData(result)
                 .toEntity();
     }
     @GetMapping("/search")
-    public ResponseEntity<?> searchByAddress(@RequestParam String address,@RequestParam Pageable pageable){
+    public ResponseEntity<?> searchHouse(@RequestParam(required = false) String keyword,
+
+                                         @RequestParam(required = false) String roomType,
+                                         @RequestParam(required = false) String roomCategory,
+
+                                         @RequestParam(required = false) Double priceMin,
+                                         @RequestParam(required = false) Double priceMax,
+
+                                         @RequestParam(required = false) String address,
+                                         @RequestParam(required = false) Double latitude,
+                                         @RequestParam(required = false) Double longitude,
+                                         @RequestParam(required = false) Integer radius,
+
+                                         @RequestParam Map<String, String> featureFlags,
+
+                                         @RequestParam(defaultValue = "10") int limit,
+                                         @RequestParam(defaultValue = "0") int page){
+        Map<String, Boolean> booleanFeatureFlags = featureFlags.entrySet().stream()
+                .filter(entry -> "true".equalsIgnoreCase(entry.getValue()) || "false".equalsIgnoreCase(entry.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> Boolean.parseBoolean(entry.getValue())
+                ));
+        HouseSearchRequest request = HouseSearchRequest.builder()
+                .keyword(keyword)
+                .roomType(roomType)
+                .roomCategory(roomCategory)
+                .minPrice(priceMin)
+                .maxPrice(priceMax)
+                .address(address)
+                .latitude(latitude)
+                .longitude(longitude)
+                .radius(radius)
+                .featureFlags(booleanFeatureFlags)
+                .paging(PagingRequest.builder().page(page).size(limit).build())
+                .build();
+        var result = housingService.findHouse(request);
         return ApiResponse.build()
-                .withData(housingService.findByAddress(address, pageable))
+                .withCode(200)
+                .withData(result)
+                .toEntity();
+    };
+    @PostMapping("/addFavorite")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> addFavoriteHouse(@AuthenticationPrincipal UserDTO userRequest,
+                                              @RequestParam Long houseId) {
+        housingFavoriteService.addFavoriteHouse(userRequest, houseId);
+        return ApiResponse.build()
+                .withCode(200)
+                .withMessage("House has been added to favorites")
                 .toEntity();
     }
-    @GetMapping("/location")
-    public ResponseEntity<?> searchByLocation(@RequestParam Double latitude,
-                                              @RequestParam Double longitude,
-                                              @RequestParam Integer radius,
-                                              @RequestParam(defaultValue = "10") int limit,
-                                              @RequestParam(defaultValue = "0") int page){
-        try {
-            var request = HousePositionRequest.builder()
-                    .latitude(latitude)
-                    .longitude(longitude)
-                    .radius(radius)
-                    .build();
-            Map<String, Object> errors = ValidationUtil.validate(request);
-            if (!errors.isEmpty()){
-                return ApiResponse.build()
-                        .withSuccess(false)
-                        .withErrors(errors)
-                        .toEntity();
-            }
-            Pageable pageable = PageRequest.of(page, limit);
-            var result = housingService.findByPosition(request, pageable);
-            return ApiResponse.build()
-                    .withData(result)
-                    .toEntity();
-        } catch (Exception e){
-            return ApiResponse.build()
-                    .withSuccess(false)
-                    .withMessage(e.getMessage())
-                    .toEntity();
-        }
-    }
-    @PostMapping("/addFavorite")
-    public ResponseEntity<?> addFavoriteHouse(@AuthenticationPrincipal UserDTO userRequest,
+    @PostMapping("/removeFavorite")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> removeFavorite(@AuthenticationPrincipal UserDTO userRequest,
                                               @RequestParam Long houseId) {
         housingFavoriteService.addFavoriteHouse(userRequest, houseId);
         return ApiResponse.build()
