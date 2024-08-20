@@ -75,7 +75,7 @@ public class HousingController {
                                          @RequestParam Map<String, String> featureFlags,
 
                                          @RequestParam(defaultValue = "10") int limit,
-                                         @RequestParam(defaultValue = "0") int page){
+                                         @RequestParam(defaultValue = "1") int page){
         Map<String, Boolean> booleanFeatureFlags = featureFlags.entrySet().stream()
                 .filter(entry -> "true".equalsIgnoreCase(entry.getValue()) || "false".equalsIgnoreCase(entry.getValue()))
                 .collect(Collectors.toMap(
