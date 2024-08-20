@@ -11,9 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttachmentEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attachment_id")
+    @Id @Column(name = "attachment_id")
     Long id;
     @Column(name = "attachment_type")
     String attachmentType;

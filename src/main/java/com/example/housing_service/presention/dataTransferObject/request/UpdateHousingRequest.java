@@ -1,5 +1,8 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
+import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.util.RoomCategory;
+import com.example.housing_service.util.RoomType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,45 +11,49 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Getter
-@Setter
-@Builder
+@Getter @Setter @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateHousingRequest {
-    String address;
+    RoomType roomType;
+    RoomCategory roomCategory;
 
     String title;
-
-
     String description;
-
     Double price;
+    String thumbnail;
 
-    String roomType; // can change to enum
+    String address;
+    Double latitude;
+    Double longitude;
 
-    String roomCategory; // can change to enum
-
+    String ownerName;
     String contactPhoneNumber;
 
-    Integer area;
+    Integer houseArea;
+    Integer maxOccupancy;
 
-    Boolean sharedWithOwner;
 
-
-    String maxOccupancy;
-
+    Boolean hasPrivateBathroom;
+    Boolean hasWifi;
     Boolean hasFireSafety;
-
-
-    Boolean cleaningType;
-
-
-    Boolean hasOutdoorFeatures;
-
-
-    Boolean hasAirConditioner;
-
+    Boolean hasEmergencyExit;
+    Boolean hasMezzanine;
     Boolean hasWaterHeater;
+    Boolean hasOutdoorFeatures;
+    Boolean hasCookingArea;
+    Boolean hasAirConditioner;
+    Boolean hasFridge;
+    Boolean hasParking;
 
-    Set<String> attachments;
+
+    Boolean nearMarket;
+    Boolean nearSupermarket;
+    Boolean nearHospital;
+    Boolean nearSchool;
+    Boolean nearPark;
+    Boolean nearGym;
+    Boolean nearBus;
+    Boolean nearMainRoad;
+
+    Set<AttachmentDTO> attachments;
 }

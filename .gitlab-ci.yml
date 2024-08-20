@@ -1,24 +1,23 @@
 workflow:
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "development"
 
 variables:
-  GIT_STRATEGY: fetch
-  DOCKER_CONTAINER: ${CI_PROJECT_NAME}
+  DOCKER_CONTAINER: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}
   DOCKER_IMAGE: ${CI_PROJECT_NAME}:${CI_COMMIT_SHA}
   
-  INTERNAL_NETWORK_NAME: midtob-internal
-  INTERNAL_STATIC_IP: 172.18.0.38
+  INTERNAL_NETWORK_NAME: midtob-internal-devenv
+  INTERNAL_STATIC_IP: 172.31.0.38
   PORT: 9006
 
-  DATABASE_URL: jdbc:mysql://172.18.0.16:3306/housing_db
+  DATABASE_URL: jdbc:mysql://172.31.0.16:3306/housing_db
   DATABASE_USERNAME: root
   DATABASE_PASSWORD: midtob
 
-  # EUREKA_SERVER: http://172.18.0.3:8761/eureka
-  # KAFKA_BROKER_HOST_VIA_NGINX: midtob.com=172.18.0.2
-  # KAFKA_SERVER: 172.18.0.2:9092
-  USER_SERVICE: 172.18.0.33:9002
+  # EUREKA_SERVER: http://172.31.0.3:8761/eureka
+  # KAFKA_BROKER_HOST_VIA_NGINX: midtob.com=172.31.0.2
+  # KAFKA_SERVER: 172.31.0.2:9092
+  USER_SERVICE: 172.31.0.33:9002
 
   CPU_COUNT: 8
   CPU_SHARES: 4096
@@ -33,13 +32,14 @@ build:
     - docker build -t $DOCKER_IMAGE .
   tags:
     - housing-service
-    - ci/cd
-    - deploy
+    - development
   only:
-    - main
+    - development
 
 deploy:
   stage: deploy
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker rm -f $DOCKER_CONTAINER
     - docker run -d 
@@ -55,7 +55,6 @@ deploy:
       --cpu-shares=$CPU_SHARES $DOCKER_IMAGE
   tags:
     - housing-service
-    - ci/cd
-    - deploy
+    - development
   only:
-    - main
+    - development

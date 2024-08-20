@@ -5,22 +5,23 @@ import com.example.housing_service.persistence.repository.AttachmentRepository;
 import com.example.housing_service.persistence.repository.HousingRepository;
 import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
+import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
-import com.example.housing_service.presention.dataTransferObject.request.HousePositionRequest;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
-import com.example.housing_service.presention.dataTransferObject.request.CreationHousingRequest;
-import com.example.housing_service.presention.dataTransferObject.request.UpdateHousingRequest;
 import com.example.housing_service.presention.service.HousingService;
 import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
 import com.example.housing_service.presention.mapper.HouseMapper;
 import com.example.housing_service.presention.mapper.AttachmentMapper;
+import com.example.housing_service.util.SlugGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -42,11 +43,14 @@ public class HousingServiceImpl implements HousingService{
     @Transactional
     public HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request) {
         var houseEntity = houseMapper.fromCreationToEntity(request);
+        var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
+        houseEntity.setSlug(slug);
         houseEntity.setPosterId(userRequest.getUserId());
         housingRepository.save(houseEntity);
         List<AttachmentEntity> attachmentEntities = request.getAttachments().stream()
                 .map(attachmentDTO -> {
                     return AttachmentEntity.builder()
+                            .id(attachmentDTO.getAttachmentId())
                             .houseEntity(houseEntity)
                             .attachmentType(attachmentDTO.getAttachmentType())
                             .attachmentName(attachmentDTO.getAttachmentName())
@@ -76,76 +80,96 @@ public class HousingServiceImpl implements HousingService{
     }
 
     @Override
-    public HouseResponse getHouseById(Long houseId) throws Exception {
-        var result = housingRepository.findById(houseId)
-                .orElseThrow(() -> new Exception(String.format("House with id %s not found", houseId)));
+    @Transactional
+    public HouseResponse getHouseBySlug(String slug) throws Exception {
+        var result = housingRepository.findBySlug(slug)
+                .orElseThrow(() -> new Exception(String.format("House with slug %s not found", slug)));
+        result.setTotalViews(result.getTotalViews()+1);
+        housingRepository.save(result);
         var attachments = result.getAttachments();
+        var poster = userClient.fetchUser(result.getPosterId());
         var response = houseMapper.toDto(result);
+        response.setPoster(poster.getData());
         response.setAttachments(attachmentMapper.toDto(attachments));
         return response;
     }
 
     @Override
-    public PageResponse<HouseResponse> findTopFavorite(Pageable pageable) {
-        var result = housingRepository.findTopFavorite(pageable);
-        return PageResponse.<HouseResponse>builder()
-                .totalPages(result.getTotalPages())
-                .pageSize(result.getSize())
-                .build();
-    }
-
-    @Override
-    public PageResponse<HouseResponse> findByAddress(String address, Pageable pageable) {
-        var result = housingRepository.findAllByAddressContainingIgnoreCase(address, pageable);
-        List<Long> posterIds = result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList());
-        var posters = userClient.fetchUsers(posterIds);
-        Map<Long, UserDTO> posterMap = posters.getData().stream()
-                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+    public PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable) {
+        var result = housingRepository.findAllByPosterId(userRequest.getUserId(),pageable);
+        var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
                 .currentPage(result.getNumber())
                 .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())
+                .hasPrevious(result.hasPrevious())
+                .hasNext(result.hasNext())
                 .data(result.getContent().stream().map(houseEntity -> {
                     HouseResponse houseResponse = houseMapper.toDto(houseEntity);
-                    houseResponse.setPoster(posterMap.get(houseEntity.getPosterId()));
+                    houseResponse.setPoster(poster.get(houseEntity.getPosterId()));
                     return houseResponse;
                 }).collect(Collectors.toList()))
                 .build();
     }
 
     @Override
-    public PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable) {
-        int radiusInMeters = request.getRadius() * 1000;
-        var result = housingRepository.findAllByDistanceWithin(request.getLongitude(),
-                request.getLatitude(),
-                radiusInMeters,
-                pageable);
-        log.info("result " + result);
-        List<Long> posterIds = result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList());
-        var posters = userClient.fetchUsers(posterIds);
-        log.info("poster " + posters);
-        Map<Long, UserDTO> posterMap = posters.getData().stream()
-                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+    public PageResponse<HouseResponse> findTopFavorite(Pageable pageable) {
+        var result = housingRepository.findTopFavorite(pageable);
+        var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
-                .totalElements((int) result.getTotalElements())
                 .currentPage(result.getNumber())
                 .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())
-                .data(result.stream().map(houseEntity -> {
-                    HouseResponse response = houseMapper.toDto(houseEntity);
-                    response.setPoster(posterMap.get(houseEntity.getPosterId()));
-                    return response;
-                }).collect(Collectors.toList()))
-                .hasNext(result.hasNext())
                 .hasPrevious(result.hasPrevious())
+                .hasNext(result.hasNext())
+                .data(result.getContent().stream().map(houseEntity -> {
+                    HouseResponse houseResponse = houseMapper.toDto(houseEntity);
+                    houseResponse.setPoster(poster.get(houseEntity.getPosterId()));
+                    return houseResponse;
+                }).collect(Collectors.toList()))
                 .build();
     }
-    void updateImageToHouse(Set<AttachmentEntity> attachmentEntities, HouseEntity houseEntity){
-        attachmentEntities.forEach(attachment -> {
-            var updateImage = attachmentRepository.findById(attachment.getId()).orElseThrow();
-            updateImage.setHouseEntity(houseEntity);
-            attachmentRepository.save(updateImage);
-        });
+    @Override
+    public PageResponse<HouseResponse> findAllVerified(Pageable pageable) {
+        var result = housingRepository.findAllVerified(pageable);
+        var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
+        return PageResponse.<HouseResponse>builder()
+                .currentPage(result.getNumber())
+                .totalPages(result.getTotalPages())
+                .pageSize(result.getSize())
+                .hasPrevious(result.hasPrevious())
+                .hasNext(result.hasNext())
+                .data(result.getContent().stream().map(houseEntity -> {
+                    HouseResponse houseResponse = houseMapper.toDto(houseEntity);
+                    houseResponse.setPoster(poster.get(houseEntity.getPosterId()));
+                    return houseResponse;
+                }).collect(Collectors.toList()))
+                .build();
     }
 
+    @Override
+    public PageResponse<HouseResponse> findHouse(HouseSearchRequest request) {
+        Pageable pageable = PageRequest.of(0, 10);
+        var result = housingRepository.findAll(request.specification(),pageable);
+        var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
+        return PageResponse.<HouseResponse>builder()
+                .currentPage(result.getNumber())
+                .totalPages(result.getTotalPages())
+                .pageSize(result.getSize())
+                .hasPrevious(result.hasPrevious())
+                .hasNext(result.hasNext())
+                .data(result.getContent().stream().map(houseEntity -> {
+                    HouseResponse houseResponse = houseMapper.toDto(houseEntity);
+                    houseResponse.setPoster(poster.get(houseEntity.getPosterId()));
+                    return houseResponse;
+                }).collect(Collectors.toList()))
+                .build();
+    }
+
+    private Map<Long,UserDTO> mapPostersById(List<Long> Ids){
+        Set<Long> uniqueIds = new HashSet<>(Ids);
+        var posters = userClient.fetchUsers(new ArrayList<>(uniqueIds));
+        return posters.getData().stream()
+                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+    }
 }
