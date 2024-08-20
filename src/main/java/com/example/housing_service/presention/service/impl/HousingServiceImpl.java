@@ -73,7 +73,7 @@ public class HousingServiceImpl implements HousingService{
 //            imageRepository.delete(oldImage);
 //        });
 
-        // then save new images... need change
+//         then save new images... need change
         housingRepository.save(houseMapper.fromUpdatingToEntity(updatingHouse, request));
 
 //        updateImageToHouse(updatingHouse.getAttachmentEntities(), updatingHouse);
@@ -149,8 +149,7 @@ public class HousingServiceImpl implements HousingService{
 
     @Override
     public PageResponse<HouseResponse> findHouse(HouseSearchRequest request) {
-        Pageable pageable = PageRequest.of(0, 10);
-        var result = housingRepository.findAll(request.specification(),pageable);
+        var result = housingRepository.findAll(request.specification(),request.getPaging().pageable());
         var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
                 .currentPage(result.getNumber())

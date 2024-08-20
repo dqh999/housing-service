@@ -25,7 +25,7 @@ public final class HouseSpecification {
 
 
     public static Specification<HouseEntity> hasField(String fieldName, Object value) {
-        if (value != null) {
+        if (value != null ) {
             return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(fieldName), value);
         }
         return null;

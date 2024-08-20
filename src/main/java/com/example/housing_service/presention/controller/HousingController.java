@@ -42,30 +42,6 @@ public class HousingController {
                 .withData(result)
                 .toEntity();
     }
-    @PostMapping("/test")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public String test(){
-        return "hi cau nha!@";
-    }
-    @PostMapping("/uploadHouses")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> uploadHouses(
-            @AuthenticationPrincipal UserDTO userRequest,
-            @RequestBody List<CreationHousingRequest> requests){
-        for (CreationHousingRequest request : requests) {
-            Map<String, Object> errors = ValidationUtil.validate(request);
-            if (!errors.isEmpty()) {
-                return ApiResponse.build()
-                        .withErrors(errors)
-                        .toEntity();
-            }
-        }
-        return ApiResponse.build()
-                .withData(requests.stream().map(request -> {
-                    return housingService.createHousing(userRequest, request);
-                }).collect(Collectors.toList()))
-                .toEntity();
-    }
 
     @PutMapping("/{houseId}")
     @PreAuthorize("hasRole('ROLE_USER')")

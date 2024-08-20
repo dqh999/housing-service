@@ -62,7 +62,7 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
                     criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
         }
 
-        if (address != null){
+        if (address != null && !address.trim().isEmpty()){
             specifications.add(HouseSpecification.hasFieldLike("address",address));
         } else if (longitude != null && latitude != null && radius != null){
             specifications.add(HouseSpecification.withLocation(longitude,latitude,radius));
