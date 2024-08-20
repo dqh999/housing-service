@@ -42,8 +42,9 @@ public class HouseEntity  extends AbstractEntity {
     Double price;
     @Column(name = "slug")
     String slug;
-//    @Column(name = "is_verified")
-//    Boolean isVerified;
+    @Column(name = "is_verified")
+    Boolean isVerified;
+    Integer totalViews;
 
     @Column(name = "address", nullable = false)
     String address;

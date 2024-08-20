@@ -15,9 +15,6 @@ import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HouseSpecification {
-    private static final String FIELD_URL = "url";
-    private static final String FIELD_DESCRIPTION = "description";
-    private static final String FIELD_STATUS = "status";
 
     private final List<Specification<HouseEntity>> specifications = new ArrayList<>();
 
@@ -29,9 +26,7 @@ public final class HouseSpecification {
 
     public static Specification<HouseEntity> hasField(String fieldName, Object value) {
         if (value != null) {
-            if (value instanceof Boolean) {
-                return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(fieldName), value);
-            }
+            return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(fieldName), value);
         }
         return null;
     }

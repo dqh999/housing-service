@@ -32,21 +32,17 @@ public class HousingFavoriteServiceImpl implements HousingFavoriteService {
 
     @Override
     public long getTotalFavorites(Long houseId) {
-        return 0;
+        return housingFavoriteRepository.countByHouseId(houseId);
     }
 
     @Override
+    @Transactional
     public void removeFavoriteHouse(UserDTO userRequest, Long houseId) {
-
-    }
-
-    @Override
-    public List<HouseEntity> getFavoriteHouses(Long userId) {
-        return null;
+        housingFavoriteRepository.deleteByUserIdAndHouseId(userRequest.getUserId(), houseId);
     }
 
     @Override
     public boolean isHouseFavorite(UserDTO userRequest, Long houseId) {
-        return false;
+        return housingFavoriteRepository.existsByUserIdAndHouseId(userRequest.getUserId(), houseId);
     }
 }

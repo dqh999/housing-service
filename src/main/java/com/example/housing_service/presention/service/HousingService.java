@@ -11,16 +11,18 @@ import org.springframework.data.domain.Pageable;
 
 public interface HousingService {
     HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request);
-
     void updateHousing(Long houseId, UpdateHousingRequest request) throws Exception;
-    HouseResponse getHouseById(Long houseId) throws Exception;
+
     HouseResponse getHouseBySlug(String slug)throws Exception;
 
+
+    PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable);
     PageResponse<HouseResponse> findTopFavorite(Pageable pageable);
+    PageResponse<HouseResponse> findAllVerified(Pageable pageable);
     PageResponse<HouseResponse> findHouse(HouseSearchRequest request);
 
-    PageResponse<HouseResponse> findByAddress(String address, Pageable pageable);
-
-
-    PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable);
+//    PageResponse<HouseResponse> findByAddress(String address, Pageable pageable);
+//
+//
+//    PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable);
 }

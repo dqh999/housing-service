@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Data
-@Getter
-@Builder
+@Getter @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseSearchRequest extends FilterRequest<HouseEntity> {
     String keyword;
@@ -45,17 +43,21 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
     public Specification<HouseEntity> specification() {
         List<Specification<HouseEntity>> specifications = new ArrayList<>();
 
-        specifications.add(HouseSpecification.hasField("roomType", roomType));
-        specifications.add(HouseSpecification.hasField("roomCategory", roomCategory));
-        specifications.add(HouseSpecification.hasField("address", address));
+        specifications.add(HouseSpecification.hasFieldLike("title",keyword));
 
-        if (minPrice != null && maxPrice != null & minPrice > 0 && maxPrice < 10000000) {
+        specifications.add(HouseSpecification.hasField("roomType",roomType));
+        specifications.add(HouseSpecification.hasField("roomCategory",roomCategory));
+
+        if (minPrice != null && maxPrice != null && minPrice > 0 && maxPrice < 10000000 && minPrice < maxPrice) {
+            System.out.println("filter between " + minPrice + "max" + maxPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("price"), minPrice, maxPrice));
-        } else if (minPrice != null && minPrice > 0) {
+        } else if (minPrice != null && minPrice > 0 && minPrice < 10000000) {
+            System.out.println("filter min price" + minPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice));
-        } else if (maxPrice != null && maxPrice < 10000000) {
+        } else if (maxPrice != null && maxPrice < 10000000 && maxPrice > 0) {
+            System.out.println("filter max price" + minPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
         }
@@ -68,10 +70,8 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
 
         if (featureFlags != null) {
             featureFlags.forEach((key, value) -> {
-
-                System.out.println(value);
-//                Boolean boolValue = Boolean.parseBoolean(value);
-//                specifications.add(HouseSpecification.hasField(key, boolValue));
+                System.out.println("key  " + key + "         value " + value);
+                specifications.add(HouseSpecification.hasField(key, value));
             });
         }
         return specifications.stream()

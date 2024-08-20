@@ -2,9 +2,6 @@ package com.example.housing_service.presention.dataTransferObject.response;
 
 import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
-import com.example.housing_service.util.RoomCategory;
-import com.example.housing_service.util.RoomType;
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -29,6 +25,9 @@ public class HouseResponse {
     Double price;
     String thumbnail;
     String slug;
+    Boolean isVerified;
+    Integer totalViews;
+    long totalFavorite;
 
     String address;
     Double latitude;

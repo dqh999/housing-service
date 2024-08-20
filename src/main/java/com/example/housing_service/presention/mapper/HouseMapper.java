@@ -15,11 +15,7 @@ public interface HouseMapper extends EntityMapper<HouseEntity, HouseResponse> {
     HouseEntity fromCreationToEntity(CreationHousingRequest request);
     @Mapping(target = "attachments", ignore = true)
     HouseEntity fromUpdatingToEntity(@MappingTarget HouseEntity houseEntity, UpdateHousingRequest request);
-
     @Mapping(source = "id", target = "houseId")
     @Mapping(target = "attachments", ignore = true)
     HouseResponse toDto(HouseEntity houseEntity);
-
-
-
 }

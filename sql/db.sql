@@ -11,6 +11,7 @@ CREATE TABLE tbl_houses (
     thumbnail VARCHAR(255),
     slug VARCHAR(255) UNIQUE,
     is_verified BOOLEAN,
+    total_views INT DEFAULT 0,
 
     address VARCHAR(255) ,
     latitude DOUBLE NOT NULL,

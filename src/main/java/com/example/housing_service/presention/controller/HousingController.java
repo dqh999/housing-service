@@ -16,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,16 +37,29 @@ public class HousingController {
     public ResponseEntity<?> createHouse(
             @AuthenticationPrincipal UserDTO userRequest,
             @Valid @RequestBody CreationHousingRequest request){
+        var result = housingService.createHousing(userRequest, request);
         return ApiResponse.build()
-                .withData(housingService.createHousing(userRequest, request))
+                .withData(result)
                 .toEntity();
+    }
+    @PostMapping("/test")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public String test(){
+        return "hi cau nha!@";
     }
     @PostMapping("/uploadHouses")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> uploadHouses(
             @AuthenticationPrincipal UserDTO userRequest,
-            @Valid @RequestBody List<CreationHousingRequest> requests){
-        log.info("request size: " + requests.size());
+            @RequestBody List<CreationHousingRequest> requests){
+        for (CreationHousingRequest request : requests) {
+            Map<String, Object> errors = ValidationUtil.validate(request);
+            if (!errors.isEmpty()) {
+                return ApiResponse.build()
+                        .withErrors(errors)
+                        .toEntity();
+            }
+        }
         return ApiResponse.build()
                 .withData(requests.stream().map(request -> {
                     return housingService.createHousing(userRequest, request);
@@ -91,9 +106,6 @@ public class HousingController {
                         Map.Entry::getKey,
                         entry -> Boolean.parseBoolean(entry.getValue())
                 ));
-        booleanFeatureFlags.forEach((key, value) -> {
-            System.out.println("key " + key + " value " + value);
-        });
         HouseSearchRequest request = HouseSearchRequest.builder()
                 .keyword(keyword)
                 .roomType(roomType)
@@ -113,45 +125,19 @@ public class HousingController {
                 .withData(result)
                 .toEntity();
     };
-    @GetMapping("/address")
-    public ResponseEntity<?> searchByAddress(@RequestParam String address,
-                                             @RequestParam Pageable pageable){
+    @PostMapping("/addFavorite")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> addFavoriteHouse(@AuthenticationPrincipal UserDTO userRequest,
+                                              @RequestParam Long houseId) {
+        housingFavoriteService.addFavoriteHouse(userRequest, houseId);
         return ApiResponse.build()
-                .withData(housingService.findByAddress(address, pageable))
+                .withCode(200)
+                .withMessage("House has been added to favorites")
                 .toEntity();
     }
-    @GetMapping("/location")
-    public ResponseEntity<?> searchByLocation(@RequestParam Object reu,
-                                              @RequestParam Double longitude,
-                                              @RequestParam Integer radius,
-                                              @RequestParam(defaultValue = "10") int limit,
-                                              @RequestParam(defaultValue = "0") int page){
-        try {
-            var request = HousePositionRequest.builder()
-                    .longitude(longitude)
-                    .radius(radius)
-                    .build();
-            Map<String, Object> errors = ValidationUtil.validate(request);
-            if (!errors.isEmpty()){
-                return ApiResponse.build()
-                        .withSuccess(false)
-                        .withErrors(errors)
-                        .toEntity();
-            }
-            Pageable pageable = PageRequest.of(page, limit);
-            var result = housingService.findByPosition(request, pageable);
-            return ApiResponse.build()
-                    .withData(result)
-                    .toEntity();
-        } catch (Exception e){
-            return ApiResponse.build()
-                    .withSuccess(false)
-                    .withMessage(e.getMessage())
-                    .toEntity();
-        }
-    }
-    @PostMapping("/addFavorite")
-    public ResponseEntity<?> addFavoriteHouse(@AuthenticationPrincipal UserDTO userRequest,
+    @PostMapping("/removeFavorite")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> removeFavorite(@AuthenticationPrincipal UserDTO userRequest,
                                               @RequestParam Long houseId) {
         housingFavoriteService.addFavoriteHouse(userRequest, houseId);
         return ApiResponse.build()
