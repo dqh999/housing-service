@@ -14,8 +14,8 @@ import java.util.Map;
 @Getter @Setter  @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class PagingRequest {
-    private int page = 1;
-    private int size = 10;
+    private int page;
+    private int size;
     private Map<String, String> orders = new HashMap<>();
 
     public Pageable pageable() {
