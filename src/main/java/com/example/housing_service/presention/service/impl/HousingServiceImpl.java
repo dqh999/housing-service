@@ -152,6 +152,7 @@ public class HousingServiceImpl implements HousingService{
         var result = housingRepository.findAll(request.specification(),request.getPaging().pageable());
         var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
+                .totalElements((int) result.getTotalElements())
                 .currentPage(result.getNumber())
                 .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())
