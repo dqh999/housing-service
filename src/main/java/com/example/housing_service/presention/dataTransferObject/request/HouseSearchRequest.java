@@ -65,7 +65,8 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
         if (address != null && !address.trim().isEmpty()){
             specifications.add(HouseSpecification.hasFieldLike("address",address));
         } else if (longitude != null && latitude != null && radius != null){
-            specifications.add(HouseSpecification.withLocation(longitude,latitude,radius));
+            var convertRadiusToKm = radius*1000;
+            specifications.add(HouseSpecification.withLocation(longitude,latitude,convertRadiusToKm));
         }
 
         if (featureFlags != null) {
