@@ -82,6 +82,7 @@ public class HousingController {
                         Map.Entry::getKey,
                         entry -> Boolean.parseBoolean(entry.getValue())
                 ));
+        var convertRadiusToKm = radius*1000;
         HouseSearchRequest request = HouseSearchRequest.builder()
                 .keyword(keyword)
                 .roomType(roomType)
@@ -91,7 +92,7 @@ public class HousingController {
                 .address(address)
                 .latitude(latitude)
                 .longitude(longitude)
-                .radius(radius)
+                .radius(convertRadiusToKm)
                 .featureFlags(booleanFeatureFlags)
                 .paging(PagingRequest.builder().page(page).size(limit).build())
                 .build();
