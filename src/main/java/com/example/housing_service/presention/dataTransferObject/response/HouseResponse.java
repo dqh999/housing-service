@@ -28,6 +28,7 @@ public class HouseResponse {
     String description;
     Double price;
     String thumbnail;
+    String slug;
 
     String address;
     Double latitude;

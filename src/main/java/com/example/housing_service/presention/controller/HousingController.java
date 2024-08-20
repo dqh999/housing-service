@@ -1,9 +1,7 @@
 package com.example.housing_service.presention.controller;
 
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
-import com.example.housing_service.presention.dataTransferObject.request.CreationHousingRequest;
-import com.example.housing_service.presention.dataTransferObject.request.HousePositionRequest;
-import com.example.housing_service.presention.dataTransferObject.request.UpdateHousingRequest;
+import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.ApiResponse;
 import com.example.housing_service.presention.service.HousingFavoriteService;
 import com.example.housing_service.presention.service.HousingService;
@@ -63,27 +61,73 @@ public class HousingController {
                 .toEntity();
     }
     @GetMapping
-    public ResponseEntity<?> getHouseById(@RequestParam Long houseId) throws Exception{
-        var result = housingService.getHouseById(houseId);
+    public ResponseEntity<?> getHouseBySlug(@RequestParam String slug) throws Exception{
+        var result = housingService.getHouseBySlug(slug);
         return ApiResponse.build()
                 .withData(result)
                 .toEntity();
     }
     @GetMapping("/search")
-    public ResponseEntity<?> searchByAddress(@RequestParam String address,@RequestParam Pageable pageable){
+    public ResponseEntity<?> searchHouse(@RequestParam(required = false) String keyword,
+
+                                         @RequestParam(required = false) String roomType,
+                                         @RequestParam(required = false) String roomCategory,
+
+                                         @RequestParam(required = false) Double priceMin,
+                                         @RequestParam(required = false) Double priceMax,
+
+                                         @RequestParam(required = false) String address,
+                                         @RequestParam(required = false) Double latitude,
+                                         @RequestParam(required = false) Double longitude,
+                                         @RequestParam(required = false) Integer radius,
+
+                                         @RequestParam Map<String, String> featureFlags,
+
+                                         @RequestParam(defaultValue = "10") int limit,
+                                         @RequestParam(defaultValue = "0") int page){
+        Map<String, Boolean> booleanFeatureFlags = featureFlags.entrySet().stream()
+                .filter(entry -> "true".equalsIgnoreCase(entry.getValue()) || "false".equalsIgnoreCase(entry.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> Boolean.parseBoolean(entry.getValue())
+                ));
+        booleanFeatureFlags.forEach((key, value) -> {
+            System.out.println("key " + key + " value " + value);
+        });
+        HouseSearchRequest request = HouseSearchRequest.builder()
+                .keyword(keyword)
+                .roomType(roomType)
+                .roomCategory(roomCategory)
+                .minPrice(priceMin)
+                .maxPrice(priceMax)
+                .address(address)
+                .latitude(latitude)
+                .longitude(longitude)
+                .radius(radius)
+                .featureFlags(booleanFeatureFlags)
+                .paging(PagingRequest.builder().page(page).size(limit).build())
+                .build();
+        var result = housingService.findHouse(request);
+        return ApiResponse.build()
+                .withCode(200)
+                .withData(result)
+                .toEntity();
+    };
+    @GetMapping("/address")
+    public ResponseEntity<?> searchByAddress(@RequestParam String address,
+                                             @RequestParam Pageable pageable){
         return ApiResponse.build()
                 .withData(housingService.findByAddress(address, pageable))
                 .toEntity();
     }
     @GetMapping("/location")
-    public ResponseEntity<?> searchByLocation(@RequestParam Double latitude,
+    public ResponseEntity<?> searchByLocation(@RequestParam Object reu,
                                               @RequestParam Double longitude,
                                               @RequestParam Integer radius,
                                               @RequestParam(defaultValue = "10") int limit,
                                               @RequestParam(defaultValue = "0") int page){
         try {
             var request = HousePositionRequest.builder()
-                    .latitude(latitude)
                     .longitude(longitude)
                     .radius(radius)
                     .build();
