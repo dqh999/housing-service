@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -108,7 +109,7 @@ public class HousingController {
     public ResponseEntity<?> getAllMyHouse(@AuthenticationPrincipal UserDTO userRequest,
                                                @RequestParam(defaultValue = "10") int limit,
                                                @RequestParam(defaultValue = "1") int page) {
-        Pageable pageable = PageRequest.of(page-1,limit);
+        Pageable pageable = PageRequest.of(page-1,limit, Sort.by(Sort.Direction.DESC, "updatedAt"));
         var result = housingService.findAllByPosterId(userRequest,pageable);
         return ApiResponse.build()
                 .withCode(200)
