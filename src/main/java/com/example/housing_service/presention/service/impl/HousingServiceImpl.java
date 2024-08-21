@@ -45,6 +45,7 @@ public class HousingServiceImpl implements HousingService{
     @Transactional
     public HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request) {
         var houseEntity = houseMapper.fromCreationToEntity(request);
+        houseEntity.setTotalViews(0);
         houseEntity.setStatus(HouseStatus.PENDING);
         var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
         houseEntity.setSlug(slug);
