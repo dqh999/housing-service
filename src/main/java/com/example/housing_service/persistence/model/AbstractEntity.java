@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -27,7 +28,7 @@ public class AbstractEntity {
     )
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    Date createdAt;
+    LocalDateTime createdAt;
 
     @Column(
             name = "updated_at",
@@ -35,5 +36,5 @@ public class AbstractEntity {
     )
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    Date updatedAt;
+    LocalDateTime updatedAt;
 }
