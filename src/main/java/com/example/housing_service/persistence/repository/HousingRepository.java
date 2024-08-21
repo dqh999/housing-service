@@ -17,6 +17,8 @@ import java.util.Optional;
 public interface HousingRepository extends JpaRepository<HouseEntity, Long>, JpaSpecificationExecutor<HouseEntity> {
     @Query("SELECT h FROM HouseEntity h WHERE h.posterId = :posterId")
     Page<HouseEntity> findAllByPosterId(@Param("posterId") Long posterId, Pageable pageable);
+    @Query("SELECT SUM(h.totalViews) FROM HouseEntity h WHERE h.posterId = :posterId")
+    Integer findTotalViewsByPosterId(@Param("posterId") Long posterId);
     Optional<HouseEntity> findBySlug(String slug);
 //    Page<HouseEntity> findAllByAddressContainingIgnoreCase(String address, Pageable pageable);
 //    @Query(value = "SELECT h.* FROM `tbl_houses` h " +

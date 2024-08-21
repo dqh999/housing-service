@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -59,5 +60,14 @@ public final class HouseSpecification {
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(specifications.stream()
                 .filter(Objects::nonNull)
                 .map(s -> s.toPredicate(root, query, criteriaBuilder)).toArray(Predicate[]::new));
+    }
+    public static boolean isFieldExists(String fieldName) {
+        try {
+            Field field = HouseEntity.class.getDeclaredField(fieldName);
+            return field != null;
+        } catch (NoSuchFieldException e) {
+            System.out.println("lỗi nha!");
+            return false;
+        }
     }
 }

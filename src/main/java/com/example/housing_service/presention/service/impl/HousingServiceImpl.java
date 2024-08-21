@@ -97,8 +97,11 @@ public class HousingServiceImpl implements HousingService{
     @Override
     public PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable) {
         var result = housingRepository.findAllByPosterId(userRequest.getUserId(),pageable);
+        var totalViews = housingRepository.findTotalViewsByPosterId(userRequest.getUserId());
         var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
+                .totalElements((int) result.getTotalElements())
+                .totalViews(totalViews)
                 .currentPage(result.getNumber())
                 .totalPages(result.getTotalPages())
                 .pageSize(result.getSize())

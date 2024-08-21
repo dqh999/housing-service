@@ -20,9 +20,4 @@ public interface HousingService {
     PageResponse<HouseResponse> findTopFavorite(Pageable pageable);
     PageResponse<HouseResponse> findAllVerified(Pageable pageable);
     PageResponse<HouseResponse> findHouse(HouseSearchRequest request);
-
-//    PageResponse<HouseResponse> findByAddress(String address, Pageable pageable);
-//
-//
-//    PageResponse<HouseResponse> findByPosition(HousePositionRequest request, Pageable pageable);
 }
