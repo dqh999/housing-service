@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,7 +76,8 @@ public class HousingController {
                                          @RequestParam Map<String, String> featureFlags,
 
                                          @RequestParam(defaultValue = "10") int limit,
-                                         @RequestParam(defaultValue = "1") int page){
+                                         @RequestParam(defaultValue = "1") int page,
+                                         @RequestParam(required = false) String sort){
         Map<String, Boolean> booleanFeatureFlags = featureFlags.entrySet().stream()
                 .filter(entry -> "true".equalsIgnoreCase(entry.getValue()) || "false".equalsIgnoreCase(entry.getValue()))
                 .collect(Collectors.toMap(
@@ -93,7 +95,7 @@ public class HousingController {
                 .longitude(longitude)
                 .radius(radius)
                 .featureFlags(booleanFeatureFlags)
-                .paging(PagingRequest.builder().page(page).size(limit).build())
+                .paging(PagingRequest.builder().page(page).size(limit).orders(PagingRequest.extractSortingParams(sort)).build())
                 .build();
         var result = housingService.findHouse(request);
         return ApiResponse.build()
@@ -101,6 +103,36 @@ public class HousingController {
                 .withData(result)
                 .toEntity();
     };
+    @GetMapping("/myHouse")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> getAllMyHouse(@AuthenticationPrincipal UserDTO userRequest,
+                                               @RequestParam(defaultValue = "10") int limit,
+                                               @RequestParam(defaultValue = "1") int page) {
+        Pageable pageable = PageRequest.of(page-1,limit);
+        var result = housingService.findAllByPosterId(userRequest,pageable);
+        return ApiResponse.build()
+                .withCode(200)
+                .withData(result)
+                .toEntity();
+    }
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getTopFavorite(@RequestParam(defaultValue = "10") int limit,
+                                            @RequestParam(defaultValue = "1") int page) {
+        Pageable pageable = PageRequest.of(page-1, limit);
+        var result = housingService.findTopFavorite(pageable);
+        return ApiResponse.build()
+                .withData(result)
+                .toEntity();
+    }
+    @GetMapping("/verified")
+    public ResponseEntity<?> getAllVerified(@RequestParam(defaultValue = "10") int limit,
+                                            @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, limit);
+        var result = housingService.findAllVerified(pageable);
+        return ApiResponse.build()
+                .withData(result)
+                .toEntity();
+    }
     @PostMapping("/addFavorite")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addFavoriteHouse(@AuthenticationPrincipal UserDTO userRequest,
@@ -119,15 +151,6 @@ public class HousingController {
         return ApiResponse.build()
                 .withCode(200)
                 .withMessage("House has been added to favorites")
-                .toEntity();
-    }
-    @GetMapping("/favorite")
-    public ResponseEntity<?> getTopFavorite(@RequestParam(defaultValue = "10") int limit,
-                                            @RequestParam(defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, limit);
-        var result = housingService.findTopFavorite(pageable);
-        return ApiResponse.build()
-                .withData(result)
                 .toEntity();
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 @Getter @Builder
 public class PageResponse<T> implements Serializable {
     Integer totalElements;
+    Integer totalViews;
     Integer totalPages;
     Integer currentPage;
     Integer pageSize;

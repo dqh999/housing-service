@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +72,9 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
 
         if (featureFlags != null) {
             featureFlags.forEach((key, value) -> {
-                System.out.println("key  " + key + "         value " + value);
-                specifications.add(HouseSpecification.hasField(key, value));
+                if (HouseSpecification.isFieldExists(key)){
+                    specifications.add(HouseSpecification.hasField(key, value));
+                }
             });
         }
         return specifications.stream()
