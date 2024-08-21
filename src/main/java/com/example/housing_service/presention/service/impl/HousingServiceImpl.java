@@ -8,11 +8,13 @@ import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
+import com.example.housing_service.presention.exception.HousingException;
 import com.example.housing_service.presention.service.HousingService;
 import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
 import com.example.housing_service.presention.mapper.HouseMapper;
 import com.example.housing_service.presention.mapper.AttachmentMapper;
+import com.example.housing_service.util.HouseStatus;
 import com.example.housing_service.util.SlugGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -43,6 +45,7 @@ public class HousingServiceImpl implements HousingService{
     @Transactional
     public HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request) {
         var houseEntity = houseMapper.fromCreationToEntity(request);
+        houseEntity.setStatus(HouseStatus.PENDING);
         var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
         houseEntity.setSlug(slug);
         houseEntity.setPosterId(userRequest.getUserId());
@@ -98,7 +101,6 @@ public class HousingServiceImpl implements HousingService{
     public PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable) {
         var result = housingRepository.findAllByPosterId(userRequest.getUserId(),pageable);
         var totalViews = housingRepository.findTotalViewsByPosterId(userRequest.getUserId());
-        var poster = mapPostersById(result.stream().map(HouseEntity::getPosterId).collect(Collectors.toList()));
         return PageResponse.<HouseResponse>builder()
                 .totalElements((int) result.getTotalElements())
                 .totalViews(totalViews)
@@ -108,9 +110,7 @@ public class HousingServiceImpl implements HousingService{
                 .hasPrevious(result.hasPrevious())
                 .hasNext(result.hasNext())
                 .data(result.getContent().stream().map(houseEntity -> {
-                    HouseResponse houseResponse = houseMapper.toDto(houseEntity);
-                    houseResponse.setPoster(poster.get(houseEntity.getPosterId()));
-                    return houseResponse;
+                    return houseMapper.toDto(houseEntity);
                 }).collect(Collectors.toList()))
                 .build();
     }
@@ -171,8 +171,14 @@ public class HousingServiceImpl implements HousingService{
 
     private Map<Long,UserDTO> mapPostersById(List<Long> Ids){
         Set<Long> uniqueIds = new HashSet<>(Ids);
-        var posters = userClient.fetchUsers(new ArrayList<>(uniqueIds));
-        return posters.getData().stream()
-                .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+        try {
+            var posters = userClient.fetchUsers(new ArrayList<>(uniqueIds));
+            return posters.getData().stream()
+                    .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
+        } catch (Exception e) {
+            String errorMessage = String.format("Error fetching users with IDs: %s. Error message: %s",
+                    uniqueIds.toString(), e.getMessage());
+            throw new HousingException("A-01");
+        }
     }
 }

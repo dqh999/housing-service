@@ -2,6 +2,7 @@ package com.example.housing_service.presention.dataTransferObject.request;
 
 import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.repository.specification.HouseSpecification;
+import com.example.housing_service.util.HouseStatus;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -43,6 +44,8 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
     @Override
     public Specification<HouseEntity> specification() {
         List<Specification<HouseEntity>> specifications = new ArrayList<>();
+
+        specifications.add(HouseSpecification.hasField("status",HouseStatus.APPROVED));
 
         specifications.add(HouseSpecification.hasFieldLike("title",keyword));
 

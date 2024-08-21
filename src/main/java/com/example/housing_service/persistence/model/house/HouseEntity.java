@@ -2,6 +2,7 @@ package com.example.housing_service.persistence.model.house;
 
 import com.example.housing_service.persistence.model.AbstractEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
+import com.example.housing_service.util.HouseStatus;
 import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
 import jakarta.persistence.*;
@@ -44,7 +45,11 @@ public class HouseEntity  extends AbstractEntity {
     String slug;
     @Column(name = "is_verified")
     Boolean isVerified;
+    @Column(name = "total_views")
     Integer totalViews;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    HouseStatus status;
 
     @Column(name = "address", nullable = false)
     String address;
