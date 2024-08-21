@@ -6,8 +6,6 @@ import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -47,8 +45,12 @@ public final class HouseSpecification {
                     root.get("geom"),
                     criteriaBuilder.function("ST_GeomFromText", String.class, criteriaBuilder.literal(location))
             );
+            Predicate withinRadius = criteriaBuilder.lessThanOrEqualTo(distance, radius);
+            if (distance != null) {
+                query.orderBy(criteriaBuilder.asc(distance));
+            }
 
-            return criteriaBuilder.lessThanOrEqualTo(distance, radius);
+            return withinRadius;
         };
     }
 
