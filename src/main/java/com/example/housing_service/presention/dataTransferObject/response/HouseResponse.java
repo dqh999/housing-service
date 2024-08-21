@@ -28,6 +28,7 @@ public class HouseResponse {
     Boolean isVerified;
     Integer totalViews;
     long totalFavorite;
+    String status;
 
     String address;
     Double latitude;

@@ -30,10 +30,11 @@ public interface HousingRepository extends JpaRepository<HouseEntity, Long>, Jpa
 //                                              @Param("radius") Integer radius,
 //                                              Pageable pageable);
     @Query("SELECT h FROM HouseEntity h " +
-            "WHERE h.isVerified = true")
+            "WHERE h.isVerified = true AND h.status = 'APPROVED'")
     Page<HouseEntity> findAllVerified(Pageable pageable);
     @Query("SELECT h FROM HouseEntity h " +
             "JOIN HouseFavoriteEntity hf ON h.id = hf.houseId " +
+            "WHERE h.status = 'APPROVED' " +
             "GROUP BY h.id " +
             "ORDER BY COUNT(hf) DESC")
     Page<HouseEntity> findTopFavorite(Pageable pageable);
