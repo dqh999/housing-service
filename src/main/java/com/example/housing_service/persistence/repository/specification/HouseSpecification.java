@@ -53,11 +53,24 @@ public final class HouseSpecification {
             return withinRadius;
         };
     }
+    public static Specification<HouseEntity> orFieldsLikeValue(List<String> fieldNames, String value) {
+        return (root, query, criteriaBuilder) -> {
+            if (fieldNames == null || fieldNames.isEmpty() || value == null || value.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
 
+            List<Predicate> predicates = new ArrayList<>();
+
+            for (String fieldName : fieldNames) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get(fieldName)), like(value)));
+            }
+
+            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
     private static String like(final String value) {
         return "%" + value.toUpperCase() + "%";
     }
-
     public Specification<HouseEntity> build() {
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(specifications.stream()
                 .filter(Objects::nonNull)

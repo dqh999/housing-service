@@ -10,7 +10,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class HousingServiceApplication {
 
 	public static void main(String[] args) {
-		System.out.println(SlugGenerator.generateUniqueSlug("Anh yêu em vãi "));
 		SpringApplication.run(HousingServiceApplication.class, args);
 	}
 }
