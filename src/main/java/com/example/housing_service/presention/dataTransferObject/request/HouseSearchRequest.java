@@ -48,6 +48,7 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
         specifications.add(HouseSpecification.hasField("status",HouseStatus.APPROVED));
 
         specifications.add(HouseSpecification.hasFieldLike("title",keyword));
+        specifications.add(HouseSpecification.hasFieldLike("description",keyword));
 
         specifications.add(HouseSpecification.hasField("roomType",roomType));
         specifications.add(HouseSpecification.hasField("roomCategory",roomCategory));
