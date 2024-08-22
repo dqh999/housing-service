@@ -20,6 +20,7 @@ import java.util.Map;
 @Getter @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseSearchRequest extends FilterRequest<HouseEntity> {
+    Long posterId;
     String keyword;
     String roomType;
     String roomCategory;
@@ -46,9 +47,11 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
         List<Specification<HouseEntity>> specifications = new ArrayList<>();
 
         specifications.add(HouseSpecification.hasField("status",HouseStatus.APPROVED));
+        specifications.add(HouseSpecification.hasField("posterId",posterId));
 
         specifications.add(HouseSpecification.hasFieldLike("title",keyword));
         specifications.add(HouseSpecification.hasFieldLike("description",keyword));
+        specifications.add(HouseSpecification.hasFieldLike("address",keyword));
 
         specifications.add(HouseSpecification.hasField("roomType",roomType));
         specifications.add(HouseSpecification.hasField("roomCategory",roomCategory));
