@@ -61,7 +61,8 @@ public class HousingController {
                 .toEntity();
     }
     @GetMapping("/search")
-    public ResponseEntity<?> searchHouse(@RequestParam(required = false) String keyword,
+    public ResponseEntity<?> searchHouse(@RequestParam(required = false) Long posterId,
+                                        @RequestParam(required = false) String keyword,
 
                                          @RequestParam(required = false) String roomType,
                                          @RequestParam(required = false) String roomCategory,
@@ -75,7 +76,6 @@ public class HousingController {
                                          @RequestParam(required = false) Integer radius,
 
                                          @RequestParam Map<String, String> featureFlags,
-
                                          @RequestParam(defaultValue = "10") int limit,
                                          @RequestParam(defaultValue = "1") int page,
                                          @RequestParam(required = false) String sort){
@@ -86,6 +86,7 @@ public class HousingController {
                         entry -> Boolean.parseBoolean(entry.getValue())
                 ));
         HouseSearchRequest request = HouseSearchRequest.builder()
+                .posterId(posterId)
                 .keyword(keyword)
                 .roomType(roomType)
                 .roomCategory(roomCategory)
@@ -110,7 +111,7 @@ public class HousingController {
                                                @RequestParam(defaultValue = "10") int limit,
                                                @RequestParam(defaultValue = "1") int page) {
         Pageable pageable = PageRequest.of(page-1,limit, Sort.by(Sort.Direction.DESC, "updatedAt"));
-        var result = housingService.findAllByPosterId(userRequest,pageable);
+        var result = housingService.findMyHouse(userRequest,pageable);
         return ApiResponse.build()
                 .withCode(200)
                 .withData(result)

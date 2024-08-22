@@ -99,7 +99,7 @@ public class HousingServiceImpl implements HousingService{
     }
 
     @Override
-    public PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable) {
+    public PageResponse<HouseResponse> findMyHouse(UserDTO userRequest, Pageable pageable) {
         var result = housingRepository.findAllByPosterId(userRequest.getUserId(),pageable);
         var totalViews = housingRepository.findTotalViewsByPosterId(userRequest.getUserId());
         return PageResponse.<HouseResponse>builder()
@@ -115,6 +115,7 @@ public class HousingServiceImpl implements HousingService{
                 }).collect(Collectors.toList()))
                 .build();
     }
+
 
     @Override
     public PageResponse<HouseResponse> findTopFavorite(Pageable pageable) {

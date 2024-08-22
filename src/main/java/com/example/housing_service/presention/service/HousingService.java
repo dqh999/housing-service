@@ -5,7 +5,6 @@ import com.example.housing_service.presention.dataTransferObject.request.HouseSe
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
 import com.example.housing_service.presention.dataTransferObject.request.CreationHousingRequest;
-import com.example.housing_service.presention.dataTransferObject.request.HousePositionRequest;
 import com.example.housing_service.presention.dataTransferObject.request.UpdateHousingRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -15,8 +14,7 @@ public interface HousingService {
 
     HouseResponse getHouseBySlug(String slug)throws Exception;
 
-
-    PageResponse<HouseResponse> findAllByPosterId(UserDTO userRequest,Pageable pageable);
+    PageResponse<HouseResponse> findMyHouse(UserDTO userRequest,Pageable pageable);
     PageResponse<HouseResponse> findTopFavorite(Pageable pageable);
     PageResponse<HouseResponse> findAllVerified(Pageable pageable);
     PageResponse<HouseResponse> findHouse(HouseSearchRequest request);
