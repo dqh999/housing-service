@@ -3,6 +3,8 @@ package com.example.housing_service.presention.controller;
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.ApiResponse;
+import com.example.housing_service.presention.dataTransferObject.response.ResponseCode;
+import com.example.housing_service.presention.exception.BusinessException;
 import com.example.housing_service.presention.service.HousingFavoriteService;
 import com.example.housing_service.presention.service.HousingService;
 import com.example.housing_service.util.ValidationUtil;
@@ -33,7 +35,6 @@ import java.util.stream.Collectors;
 public class HousingController {
     HousingService housingService;
     HousingFavoriteService housingFavoriteService;
-
     @PostMapping("/uploadHouse")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> createHouse(
@@ -54,7 +55,7 @@ public class HousingController {
                 .toEntity();
     }
     @GetMapping
-    public ResponseEntity<?> getHouseBySlug(@RequestParam String slug) throws Exception{
+    public ResponseEntity<?> getHouseBySlug(@RequestParam String slug){
         var result = housingService.getHouseBySlug(slug);
         return ApiResponse.build()
                 .withData(result)

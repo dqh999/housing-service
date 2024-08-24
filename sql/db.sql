@@ -10,6 +10,7 @@ CREATE TABLE tbl_houses (
     price DOUBLE,
     thumbnail VARCHAR(255),
     slug VARCHAR(255) UNIQUE,
+    status VARCHAR(50)
     is_verified BOOLEAN,
     total_views INT DEFAULT 0,
 
@@ -79,7 +80,7 @@ CREATE TABLE tbl_house_attachments (
     house_id BIGINT,
     position VARCHAR(50),
     attachment_type VARCHAR(50),
-    attachment_name VARCHAR(50),
+    attachment_name VARCHAR(255),
     source VARCHAR(255),
     created_at DATETIME,
     updated_at DATETIME
