@@ -10,7 +10,7 @@ spring:
   application:
     name: housing-service
   datasource:
-    url: ${DATABASE_URL:jdbc:mysql://midtob.com:3306/housing_db?useSSL=false}
+    url: ${DATABASE_URL:jdbc:mysql://midtob.com:3306/housing_db?user=root}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:midtob}

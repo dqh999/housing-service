@@ -3,12 +3,12 @@ package com.example.housing_service.presention.service.impl;
 import com.example.housing_service.intergration.client.UserClient;
 import com.example.housing_service.persistence.repository.AttachmentRepository;
 import com.example.housing_service.persistence.repository.HousingRepository;
-import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
 import com.example.housing_service.presention.dataTransferObject.request.*;
 import com.example.housing_service.presention.dataTransferObject.response.HouseResponse;
 import com.example.housing_service.presention.dataTransferObject.response.PageResponse;
-import com.example.housing_service.presention.exception.HousingException;
+import com.example.housing_service.presention.dataTransferObject.response.ResponseCode;
+import com.example.housing_service.presention.exception.BusinessException;
 import com.example.housing_service.presention.service.HousingService;
 import com.example.housing_service.persistence.model.house.HouseEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
@@ -21,9 +21,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -44,32 +42,34 @@ public class HousingServiceImpl implements HousingService{
     @Override
     @Transactional
     public HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request) {
-        var houseEntity = houseMapper.fromCreationToEntity(request);
-        houseEntity.setTotalViews(0);
-        houseEntity.setStatus(HouseStatus.PENDING);
-        var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
-        houseEntity.setSlug(slug);
-        houseEntity.setPosterId(userRequest.getUserId());
-        housingRepository.save(houseEntity);
-        List<AttachmentEntity> attachmentEntities = request.getAttachments().stream()
-                .map(attachmentDTO -> {
-                    return AttachmentEntity.builder()
-                            .id(attachmentDTO.getAttachmentId())
-                            .houseEntity(houseEntity)
-                            .attachmentType(attachmentDTO.getAttachmentType())
-                            .attachmentName(attachmentDTO.getAttachmentName())
-                            .source(attachmentDTO.getSource())
-                            .build();
-                })
-                .collect(Collectors.toList());
-        attachmentRepository.saveAll(attachmentEntities);
-        return houseMapper.toDto(houseEntity);
+        try {
+            var houseEntity = houseMapper.fromCreationToEntity(request);
+            houseEntity.setTotalViews(0);
+            houseEntity.setStatus(HouseStatus.PENDING);
+            houseEntity.setIsVerified(false);
+            var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
+            houseEntity.setSlug(slug);
+            houseEntity.setPosterId(userRequest.getUserId());
+            List<AttachmentEntity> attachmentEntities = request.getAttachments().stream()
+                    .map(attachmentDTO -> {
+                        return AttachmentEntity.builder()
+                                .id(attachmentDTO.getAttachmentId())
+                                .houseEntity(houseEntity)
+                                .attachmentType(attachmentDTO.getAttachmentType())
+                                .attachmentName(attachmentDTO.getAttachmentName())
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+            attachmentRepository.saveAll(attachmentEntities);
+            return houseMapper.toDto(houseEntity);
+        } catch(Exception e){
+            throw new BusinessException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public void updateHousing(Long houseId, UpdateHousingRequest request) throws Exception {
         var updatingHouse = housingRepository.findById(houseId).orElseThrow(() -> new Exception("HouseId: "+houseId + " not found"));
-
 
         // delete old images
 //        updatingHouse.getAttachmentEntities().forEach(image -> {
@@ -84,10 +84,19 @@ public class HousingServiceImpl implements HousingService{
     }
 
     @Override
+    public void deletHouseById(Long houseId) {
+        try {
+            housingRepository.deleteById(houseId);
+        } catch (Exception e){
+            throw new BusinessException();
+        }
+    }
+
+    @Override
     @Transactional
-    public HouseResponse getHouseBySlug(String slug) throws Exception {
+    public HouseResponse getHouseBySlug(String slug) {
         var result = housingRepository.findBySlug(slug)
-                .orElseThrow(() -> new Exception(String.format("House with slug %s not found", slug)));
+                .orElseThrow(() -> new BusinessException(ResponseCode.HOUSE_NOT_FOUND));
         result.setTotalViews(result.getTotalViews()+1);
         housingRepository.save(result);
         var attachments = result.getAttachments();
@@ -178,9 +187,7 @@ public class HousingServiceImpl implements HousingService{
             return posters.getData().stream()
                     .collect(Collectors.toMap(UserDTO::getUserId, Function.identity()));
         } catch (Exception e) {
-            String errorMessage = String.format("Error fetching users with IDs: %s. Error message: %s",
-                    uniqueIds.toString(), e.getMessage());
-            throw new HousingException("A-01");
+            throw new BusinessException();
         }
     }
 }

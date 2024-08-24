@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 public interface HousingService {
     HouseResponse createHousing(UserDTO userRequest, CreationHousingRequest request);
     void updateHousing(Long houseId, UpdateHousingRequest request) throws Exception;
+    void deletHouseById(Long houseId);
 
-    HouseResponse getHouseBySlug(String slug)throws Exception;
-
+    HouseResponse getHouseBySlug(String slug);
     PageResponse<HouseResponse> findMyHouse(UserDTO userRequest,Pageable pageable);
     PageResponse<HouseResponse> findTopFavorite(Pageable pageable);
     PageResponse<HouseResponse> findAllVerified(Pageable pageable);

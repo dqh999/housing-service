@@ -49,7 +49,6 @@ public final class HouseSpecification {
             if (distance != null) {
                 query.orderBy(criteriaBuilder.asc(distance));
             }
-
             return withinRadius;
         };
     }

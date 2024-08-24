@@ -10,15 +10,15 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "tbl_house_attachments")
 @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AttachmentEntity {
+public class AttachmentEntity extends AbstractEntity{
     @Id @Column(name = "attachment_id")
     Long id;
     @Column(name = "attachment_type")
     String attachmentType;
     @Column(name = "attachment_name")
     String attachmentName;
-    @Column(name = "source")
-    String source;
+    @Column(name = "position")
+    String position;
     @ManyToOne
     @JoinColumn(name = "house_id")
     HouseEntity houseEntity;

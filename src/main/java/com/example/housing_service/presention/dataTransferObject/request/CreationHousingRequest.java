@@ -5,6 +5,7 @@ import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,8 +30,6 @@ public class CreationHousingRequest {
     @Size(max = 255, message = "Title must be less than 255 characters")
     String title;
     @NotBlank(message = "Description must not be blank")
-    @Size(max = 1000, message = "Description must be less than 1000 characters")
-    String description;
     @NotNull(message = "Price must not be null")
     Double price;
     @NotNull(message = "Thumbnail must not be null")
@@ -49,6 +48,7 @@ public class CreationHousingRequest {
     String ownerName;
     @NotBlank(message = "Contact phone number must not be blank")
     @Size(max = 20, message = "Contact phone number must be less than 20 characters")
+    @Pattern(regexp = "^((\\+84)|(0))\\d{9,10}$", message = "Invalid phone number.")
     String contactPhoneNumber;
 
     @NotNull(message = "House area must not be null")
