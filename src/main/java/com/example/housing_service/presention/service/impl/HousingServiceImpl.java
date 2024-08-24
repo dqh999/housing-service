@@ -57,7 +57,6 @@ public class HousingServiceImpl implements HousingService{
                                 .houseEntity(houseEntity)
                                 .attachmentType(attachmentDTO.getAttachmentType())
                                 .attachmentName(attachmentDTO.getAttachmentName())
-                                .source(attachmentDTO.getSource())
                                 .build();
                     })
                     .collect(Collectors.toList());

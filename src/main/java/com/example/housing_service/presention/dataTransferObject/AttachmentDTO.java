@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttachmentDTO extends AbstractEntity {
     Long attachmentId;
+    String position;
     String attachmentType;
     String attachmentName;
-    String source;
+
 }
