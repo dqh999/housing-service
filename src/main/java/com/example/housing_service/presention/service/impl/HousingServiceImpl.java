@@ -50,12 +50,13 @@ public class HousingServiceImpl implements HousingService{
             var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
             houseEntity.setSlug(slug);
             houseEntity.setPosterId(userRequest.getUserId());
+            housingRepository.save(houseEntity);
             List<AttachmentEntity> attachmentEntities = request.getAttachments().stream()
                     .map(attachmentDTO -> {
                         return AttachmentEntity.builder()
                                 .id(attachmentDTO.getAttachmentId())
                                 .houseEntity(houseEntity)
-                                .attachmentType(attachmentDTO.getAttachmentType())
+                                .attachmentType(attachmentDTO.getType())
                                 .attachmentName(attachmentDTO.getAttachmentName())
                                 .build();
                     })
