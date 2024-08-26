@@ -4,6 +4,8 @@ import com.example.housing_service.persistence.model.AbstractEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -14,5 +16,6 @@ public class AttachmentDTO extends AbstractEntity {
     String position;
     String attachmentType;
     String attachmentName;
-
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

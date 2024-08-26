@@ -1,6 +1,7 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
 import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.util.GenderType;
 import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
 import jakarta.validation.constraints.NotBlank;
@@ -23,6 +24,7 @@ public class CreationHousingRequest {
 
     @NotNull(message = "Room type must not be null")
     RoomType roomType;
+    GenderType desiredRoommateGender;
     @NotNull(message = "Room category must not be null")
     RoomCategory roomCategory;
 

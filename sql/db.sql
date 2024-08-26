@@ -2,8 +2,10 @@ CREATE TABLE tbl_houses (
     house_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     poster_id BIGINT,
 
-    room_type VARCHAR(50), -- RENTING / ROOMMATE / SUBLET
     room_category VARCHAR(50), -- STUDIO / APARTMENT / MINI_APARTMENT / HOUSE
+
+    room_type VARCHAR(50), -- RENTING / ROOMMATE / SUBLET
+    desired_roommate_gender VARCHAR(20) -- / MALE / FEMALE / OTHER
 
     title VARCHAR(255),
     description VARCHAR(255),

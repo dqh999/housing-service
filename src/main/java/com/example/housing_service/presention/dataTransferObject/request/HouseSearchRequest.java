@@ -55,15 +55,12 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
         specifications.add(HouseSpecification.hasField("roomCategory",roomCategory));
 
         if (minPrice != null && maxPrice != null && minPrice > 0 && maxPrice < 10000000 && minPrice < maxPrice) {
-            System.out.println("filter between " + minPrice + "max" + maxPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("price"), minPrice, maxPrice));
         } else if (minPrice != null && minPrice > 0 && minPrice < 10000000) {
-            System.out.println("filter min price" + minPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice));
         } else if (maxPrice != null && maxPrice < 10000000 && maxPrice > 0) {
-            System.out.println("filter max price" + minPrice);
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
         }
