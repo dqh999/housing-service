@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttachmentDTO extends AbstractEntity {
     Long attachmentId;
-    String position;
-    String attachmentType;
+    String type;
     String attachmentName;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
