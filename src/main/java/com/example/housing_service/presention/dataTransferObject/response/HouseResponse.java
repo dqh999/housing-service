@@ -21,7 +21,6 @@ public class HouseResponse {
     Long houseId;
     String roomCategory;
     String roomType;
-    String desiredRoommateGender;
     UserDTO poster;
 
     String title;
