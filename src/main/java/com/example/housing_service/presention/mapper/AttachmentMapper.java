@@ -14,5 +14,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface AttachmentMapper extends EntityMapper<AttachmentEntity, AttachmentDTO>{
     @Mapping(source = "id", target = "attachmentId")
+    @Mapping(source = "attachmentType", target = "type")
     AttachmentDTO toDto(AttachmentEntity attachmentEntity);
 }
