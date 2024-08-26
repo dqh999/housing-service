@@ -77,8 +77,6 @@ public class HouseEntity  extends AbstractEntity {
     Double electricityFee;
     @Column(name = "water_fee")
     Double waterFee;
-    @Column(name = "internet_fee")
-    Double internetFee;
     @Column(name = "common_service_fee")
     Double commonServiceFee;
 

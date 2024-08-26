@@ -59,7 +59,6 @@ public class CreationHousingRequest {
     Double wifiFee;
     Double electricityFee;
     Double waterFee;
-    Double internetFee;
     Double commonServiceFee;
 
     @NotNull(message = "hasPrivateBathroom must not be null")
