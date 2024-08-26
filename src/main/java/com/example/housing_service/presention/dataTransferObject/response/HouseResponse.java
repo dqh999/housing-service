@@ -46,7 +46,6 @@ public class HouseResponse {
     Double wifiFee;
     Double electricityFee;
     Double waterFee;
-    Double internetFee;
     Double commonServiceFee;
 
     Boolean hasPrivateBathroom;
