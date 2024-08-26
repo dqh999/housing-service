@@ -84,6 +84,7 @@ public class HousingServiceImpl implements HousingService{
     }
 
     @Override
+    @Transactional
     public void deletHouseById(Long houseId) {
         try {
             housingRepository.deleteById(houseId);

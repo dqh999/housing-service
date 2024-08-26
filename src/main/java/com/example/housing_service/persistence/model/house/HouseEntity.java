@@ -2,6 +2,7 @@ package com.example.housing_service.persistence.model.house;
 
 import com.example.housing_service.persistence.model.AbstractEntity;
 import com.example.housing_service.persistence.model.AttachmentEntity;
+import com.example.housing_service.util.GenderType;
 import com.example.housing_service.util.HouseStatus;
 import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
@@ -29,6 +30,10 @@ public class HouseEntity  extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
     RoomType roomType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "desired_roommate_gender")
+    GenderType desiredRoommateGender;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "room_category", nullable = false)
     RoomCategory roomCategory;
@@ -68,6 +73,18 @@ public class HouseEntity  extends AbstractEntity {
     Integer houseArea;
     @Column(name = "max_occupancy")
     Integer maxOccupancy;
+
+
+    @Column(name = "wifi_fee")
+    Double wifiFee;
+    @Column(name = "electricity_fee")
+    Double electricityFee;
+    @Column(name = "water_fee")
+    Double waterFee;
+    @Column(name = "internet_fee")
+    Double internetFee;
+    @Column(name = "common_service_fee")
+    Double commonServiceFee;
 
     // Amenities
     @Column(name = "has_private_bathroom")

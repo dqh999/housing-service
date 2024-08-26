@@ -1,8 +1,10 @@
 package com.example.housing_service.presention.dataTransferObject.request;
 
 import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
+import com.example.housing_service.util.GenderType;
 import com.example.housing_service.util.RoomCategory;
 import com.example.housing_service.util.RoomType;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,6 +25,7 @@ public class CreationHousingRequest {
 
     @NotNull(message = "Room type must not be null")
     RoomType roomType;
+    GenderType desiredRoommateGender;
     @NotNull(message = "Room category must not be null")
     RoomCategory roomCategory;
 
@@ -55,6 +58,12 @@ public class CreationHousingRequest {
     Integer houseArea;
     @NotNull(message = "Max occupancy must not be null")
     Integer maxOccupancy;
+
+    Double wifiFee;
+    Double electricityFee;
+    Double waterFee;
+    Double internetFee;
+    Double commonServiceFee;
 
     @NotNull(message = "hasPrivateBathroom must not be null")
     Boolean hasPrivateBathroom;
