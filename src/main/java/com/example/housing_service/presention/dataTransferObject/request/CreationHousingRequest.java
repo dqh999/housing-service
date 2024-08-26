@@ -30,6 +30,7 @@ public class CreationHousingRequest {
     @Size(max = 255, message = "Title must be less than 255 characters")
     String title;
     @NotBlank(message = "Description must not be blank")
+    String description;
     @NotNull(message = "Price must not be null")
     Double price;
     @NotNull(message = "Thumbnail must not be null")
