@@ -45,7 +45,7 @@ public class HousingServiceImpl implements HousingService{
         try {
             var houseEntity = houseMapper.fromCreationToEntity(request);
             houseEntity.setTotalViews(0);
-            houseEntity.setStatus(HouseStatus.PENDING);
+            houseEntity.setStatus(HouseStatus.APPROVED);
             houseEntity.setIsVerified(false);
             var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
             houseEntity.setSlug(slug);
@@ -61,8 +61,11 @@ public class HousingServiceImpl implements HousingService{
                                 .build();
                     })
                     .collect(Collectors.toList());
+            System.out.println("attachment" + request.getAttachments());
             attachmentRepository.saveAll(attachmentEntities);
-            return houseMapper.toDto(houseEntity);
+            var result = houseMapper.toDto(houseEntity);
+            result.setAttachments(request.getAttachments().stream().toList());
+            return result;
         } catch(Exception e){
             throw new BusinessException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
@@ -99,6 +102,9 @@ public class HousingServiceImpl implements HousingService{
     public HouseResponse getHouseBySlug(String slug) {
         var result = housingRepository.findBySlug(slug)
                 .orElseThrow(() -> new BusinessException(ResponseCode.HOUSE_NOT_FOUND));
+        if (!result.getStatus().equals(HouseStatus.APPROVED)){
+            throw new BusinessException(ResponseCode.HOUSE_NOT_FOUND);
+        }
         result.setTotalViews(result.getTotalViews()+1);
         housingRepository.save(result);
         var attachments = result.getAttachments();
