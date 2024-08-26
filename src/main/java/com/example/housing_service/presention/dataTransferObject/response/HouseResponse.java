@@ -2,6 +2,7 @@ package com.example.housing_service.presention.dataTransferObject.response;
 
 import com.example.housing_service.presention.dataTransferObject.AttachmentDTO;
 import com.example.housing_service.presention.dataTransferObject.UserDTO;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +19,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseResponse {
     Long houseId;
-    String roomType;
     String roomCategory;
+    String roomType;
+    String desiredRoommateGender;
     UserDTO poster;
 
     String title;
@@ -42,6 +44,11 @@ public class HouseResponse {
     Integer houseArea;
     Integer maxOccupancy;
 
+    Double wifiFee;
+    Double electricityFee;
+    Double waterFee;
+    Double internetFee;
+    Double commonServiceFee;
 
     Boolean hasPrivateBathroom;
     Boolean hasWifi;

@@ -74,6 +74,18 @@ public class HouseEntity  extends AbstractEntity {
     @Column(name = "max_occupancy")
     Integer maxOccupancy;
 
+
+    @Column(name = "wifi_fee")
+    Double wifiFee;
+    @Column(name = "electricity_fee")
+    Double electricityFee;
+    @Column(name = "water_fee")
+    Double waterFee;
+    @Column(name = "internet_fee")
+    Double internetFee;
+    @Column(name = "common_service_fee")
+    Double commonServiceFee;
+
     // Amenities
     @Column(name = "has_private_bathroom")
     Boolean hasPrivateBathroom;

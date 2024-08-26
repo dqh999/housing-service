@@ -5,16 +5,16 @@ CREATE TABLE tbl_houses (
     room_category VARCHAR(50), -- STUDIO / APARTMENT / MINI_APARTMENT / HOUSE
 
     room_type VARCHAR(50), -- RENTING / ROOMMATE / SUBLET
-    desired_roommate_gender VARCHAR(20) -- / MALE / FEMALE / OTHER
 
+    rental_target VARCHAR(50),
     title VARCHAR(255),
     description VARCHAR(255),
     price DOUBLE,
     thumbnail VARCHAR(255),
     slug VARCHAR(255) UNIQUE,
-    status VARCHAR(50)
     is_verified BOOLEAN,
     total_views INT DEFAULT 0,
+    status VARCHAR(50)
 
     address VARCHAR(255) ,
     latitude DOUBLE NOT NULL,
@@ -25,6 +25,12 @@ CREATE TABLE tbl_houses (
     contact_phone_number VARCHAR(20),
     house_area INT,
     max_occupancy INT,
+
+    wifi_fee DOUBLE,
+    electricity_fee DOUBLE,
+    water_fee DOUBLE,
+    internet_fee DOUBLE,
+    common_service_fee DOUBLE,
 
     -- Amenities
     has_private_bathroom BOOLEAN,
