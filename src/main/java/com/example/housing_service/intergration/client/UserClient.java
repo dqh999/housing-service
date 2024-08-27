@@ -1,7 +1,7 @@
 package com.example.housing_service.intergration.client;
 
-import com.example.housing_service.presention.dataTransferObject.UserDTO;
-import com.example.housing_service.presention.dataTransferObject.response.ApiResponse;
+import com.example.housing_service.presentation.dataTransferObject.UserDTO;
+import com.example.housing_service.presentation.dataTransferObject.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
