@@ -33,7 +33,8 @@ public class HouseEntity  extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "room_category", nullable = false)
     RoomCategory roomCategory;
-
+    @Column(name = "flag_code")
+    Byte flagCode;
     @Column(name = "title", nullable = false)
     String title;
     @Column(name = "description")

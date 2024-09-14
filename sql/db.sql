@@ -13,8 +13,9 @@ CREATE TABLE tbl_houses (
     thumbnail VARCHAR(255),
     slug VARCHAR(255) UNIQUE,
     is_verified BOOLEAN,
+    flag_code TINYINT, -- 0: VIP 1 / 1: VIP 2 / 2: VIP 3
     total_views INT DEFAULT 0,
-    status VARCHAR(50)
+    status VARCHAR(50),
 
     address VARCHAR(255) ,
     latitude DOUBLE NOT NULL,

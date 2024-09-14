@@ -12,7 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Getter @Setter  @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class PagingRequest {
     private int page;
@@ -20,27 +23,26 @@ public class PagingRequest {
     private Map<String, String> orders = new HashMap<>();
 
     public Pageable pageable() {
-        if (page<1) page = 1;
-        if (CollectionUtils.isEmpty(orders)) {
-            return PageRequest.of(page - 1, size);
-        }
-        Sort sortable = sortable(orders);
+        if (page < 1) page = 1;
+        Sort sortable = CollectionUtils.isEmpty(orders) ? Sort.by(Sort.Order.asc("flagCode"))
+                : sortable(orders);
         return PageRequest.of(page - 1, size, sortable);
     }
 
     public Sort sortable(Map<String, String> orders) {
         List<Sort.Order> sortableList = new ArrayList<>();
+        sortableList.add(new Sort.Order(Sort.Direction.ASC,"flagCode"));
         orders.forEach((key, value) -> {
-            if (HouseSpecification.isFieldExists(key)){
+            if (HouseSpecification.isFieldExists(key)) {
                 Sort.Direction direction = Sort.Direction.DESC.name().equals(value.toUpperCase()) ? Sort.Direction.DESC : Sort.Direction.ASC;
                 Sort.Order order = new Sort.Order(direction, key);
                 sortableList.add(order);
             }
         });
         return Sort.by(sortableList);
-
     }
-    public static Map<String, String> extractSortingParams (String sort){
+
+    public static Map<String, String> extractSortingParams(String sort) {
         Map<String, String> sortingParams = new HashMap<>();
         if (sort != null && !sort.isEmpty()) {
             String[] sortParts = sort.split("-");
