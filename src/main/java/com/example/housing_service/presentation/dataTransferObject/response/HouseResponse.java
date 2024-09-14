@@ -27,6 +27,7 @@ public class HouseResponse {
     String thumbnail;
     String slug;
     Boolean isVerified;
+    Byte flagCode;
     Integer totalViews;
     long totalFavorite;
     String status;
