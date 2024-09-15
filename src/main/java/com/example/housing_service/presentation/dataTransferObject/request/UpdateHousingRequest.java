@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter @Setter @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateHousingRequest {
+    String houseCode;
     RoomType roomType;
     RoomCategory roomCategory;
 

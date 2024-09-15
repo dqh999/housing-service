@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreationHousingRequest {
-
+    String houseCode;
     @NotNull(message = "Room type must not be null")
     RoomType roomType;
     @NotNull(message = "Room category must not be null")

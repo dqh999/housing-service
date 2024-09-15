@@ -17,6 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HouseResponse {
     Long houseId;
+    String houseCode;
     String roomCategory;
     String roomType;
     UserDTO poster;

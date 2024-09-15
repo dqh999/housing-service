@@ -25,7 +25,8 @@ public class HouseEntity  extends AbstractEntity {
     Long id;
     @Column(name = "poster_id")
     Long posterId;
-
+    @Column(name = "house_code")
+    String houseCode;
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
     RoomType roomType;

@@ -60,6 +60,7 @@ public class HousingController {
 
                                          @RequestParam(required = false) String roomType,
                                          @RequestParam(required = false) String roomCategory,
+                                         @RequestParam(required = false) Byte flagCode,
 
                                          @RequestParam(required = false) Double priceMin,
                                          @RequestParam(required = false) Double priceMax,
@@ -84,6 +85,7 @@ public class HousingController {
                 .keyword(keyword)
                 .roomType(roomType)
                 .roomCategory(roomCategory)
+                .flagCode(flagCode)
                 .minPrice(priceMin)
                 .maxPrice(priceMax)
                 .address(address)

@@ -22,6 +22,7 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
     String keyword;
     String roomType;
     String roomCategory;
+    Byte flagCode;
 
     String address;
     @Min(value = -90, message = "Latitude must be at least -90")
@@ -51,7 +52,7 @@ public class HouseSearchRequest extends FilterRequest<HouseEntity> {
 
         specifications.add(HouseSpecification.hasField("roomType",roomType));
         specifications.add(HouseSpecification.hasField("roomCategory",roomCategory));
-
+        specifications.add(HouseSpecification.hasField("flagCode",flagCode));
         if (minPrice != null && maxPrice != null && minPrice > 0 && maxPrice < 10000000 && minPrice < maxPrice) {
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("price"), minPrice, maxPrice));
