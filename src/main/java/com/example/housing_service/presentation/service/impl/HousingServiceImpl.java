@@ -45,6 +45,7 @@ public class HousingServiceImpl implements HousingService{
         try {
             var houseEntity = houseMapper.fromCreationToEntity(request);
             houseEntity.setTotalViews(0);
+            houseEntity.setFlagCode((byte) 4);
             houseEntity.setStatus(HouseStatus.APPROVED);
             houseEntity.setIsVerified(false);
             var slug = SlugGenerator.generateUniqueSlug(request.getTitle());
