@@ -5,7 +5,7 @@ CREATE TABLE tbl_houses (
     room_category VARCHAR(50), -- STUDIO / APARTMENT / MINI_APARTMENT / HOUSE
 
     room_type VARCHAR(50), -- RENTING / ROOMMATE / SUBLET
-
+    house_code VARCHAR(100),
     rental_target VARCHAR(50),
     title VARCHAR(255),
     description VARCHAR(255),
